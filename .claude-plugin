@@ -16,9 +16,9 @@
       "skills": ["skill-creator", "skill-optimizer", "workflow-extractor"]
     },
     {
-      "name": "content",
+      "name": "any-file",
       "version": "1.0.0",
-      "description": "文档、图片、表格、演示文稿处理工具集",
+      "description": "多模态文件处理工具集：文档、图片、表格、演示文稿、PDF、语音转知识",
       "skills": ["docx", "pdf", "pptx", "xlsx", "voice-text-to-knowledge"]
     },
     {
@@ -30,8 +30,8 @@
     {
       "name": "product",
       "version": "1.0.0",
-      "description": "产品工作流工具集：PRD、竞品分析、产品拆解",
-      "skills": ["ai-agent-prd-writer", "ai-product-teardown", "product-insight-miner", "teardown-doc-writer", "vibe-prd-writer", "vibe-coding"]
+      "description": "产品工作流工具集：PRD、竞品分析、产品拆解、创业点子",
+      "skills": ["ai-agent-prd-writer", "ai-product-teardown", "product-insight-miner", "startup-ideation", "teardown-doc-writer", "vibe-prd-writer", "vibe-coding"]
     },
     {
       "name": "writing",
@@ -43,7 +43,7 @@
       "name": "learning",
       "version": "1.0.0",
       "description": "学习与知识管理工具集",
-      "skills": ["48h-accelerated-learning", "ai-news-digest", "interactive-learning", "notebooklm", "notebooklm-rag", "startup-ideation"]
+      "skills": ["48h-accelerated-learning", "interactive-learning"]
     },
     {
       "name": "interview",
@@ -61,7 +61,7 @@
       "name": "others",
       "version": "1.0.0",
       "description": "其他工具",
-      "skills": ["ai-evals", "schedule"]
+      "skills": ["ai-evals", "ai-news-digest", "notebooklm", "notebooklm-rag", "schedule"]
     }
   ]
 }
