@@ -1,0 +1,73 @@
+{
+  "name": "oliver-skills",
+  "version": "1.0.0",
+  "description": "Oliver's personal Skills Marketplace",
+  "plugins": [
+    {
+      "name": "feishu-suite",
+      "version": "1.0.0",
+      "description": "飞书生态全栈工具集",
+      "skills": ["lark-approval", "lark-apps", "lark-attendance", "lark-base", "lark-calendar", "lark-contact", "lark-doc", "lark-drive", "lark-event", "lark-im", "lark-mail", "lark-markdown", "lark-minutes", "lark-okr", "lark-openapi-explorer", "lark-shared", "lark-sheets", "lark-skill-maker", "lark-slides", "lark-task", "lark-vc", "lark-vc-agent", "lark-whiteboard", "lark-wiki", "lark-workflow-meeting-summary", "lark-workflow-standup-report"]
+    },
+    {
+      "name": "skill-tools-suite",
+      "version": "1.0.0",
+      "description": "Skill 创建、优化、提取工具集",
+      "skills": ["skill-creator", "skill-optimizer", "workflow-extractor"]
+    },
+    {
+      "name": "content-suite",
+      "version": "1.0.0",
+      "description": "文档、图片、表格、演示文稿处理工具集",
+      "skills": ["docx", "pdf", "pptx", "xlsx", "voice-text-to-knowledge"]
+    },
+    {
+      "name": "obsidian-suite",
+      "version": "1.0.0",
+      "description": "Obsidian 知识库专用工具",
+      "skills": ["obsidian-knowledge-saver"]
+    },
+    {
+      "name": "product-suite",
+      "version": "1.0.0",
+      "description": "产品工作流工具集：PRD、竞品分析、产品拆解",
+      "skills": ["ai-agent-prd-writer", "ai-product-teardown", "product-insight-miner", "teardown-doc-writer", "vibe-prd-writer", "vibe-coding"]
+    },
+    {
+      "name": "writing-suite",
+      "version": "1.0.0",
+      "description": "写作与内容创作工具集",
+      "skills": ["oliver-article-cowriter", "frontend-slides", "personal-productivity", "working-backwards"]
+    },
+    {
+      "name": "learning-suite",
+      "version": "1.0.0",
+      "description": "学习与知识管理工具集",
+      "skills": ["48h-accelerated-learning", "ai-news-digest", "interactive-learning", "notebooklm", "notebooklm-rag", "startup-ideation"]
+    },
+    {
+      "name": "interview-suite",
+      "version": "1.0.0",
+      "description": "面试准备与求职工具集",
+      "skills": ["ai-pm-interview-diagnosis", "ai-pm-resume-writer", "interview-script-generator", "interview-replay"]
+    },
+    {
+      "name": "goals-suite",
+      "version": "1.0.0",
+      "description": "目标与 OKR 管理工具集",
+      "skills": ["setting-okrs-goals"]
+    },
+    {
+      "name": "brainstorming",
+      "version": "1.0.0",
+      "description": "头脑风暴工具",
+      "skills": ["brainstorming"]
+    },
+    {
+      "name": "others-suite",
+      "version": "1.0.0",
+      "description": "其他工具",
+      "skills": ["ai-evals", "schedule"]
+    }
+  ]
+}
