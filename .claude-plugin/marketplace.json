@@ -7,61 +7,135 @@
       "name": "feishu",
       "version": "1.0.0",
       "description": "飞书生态全栈工具集",
-      "skills": ["lark-approval", "lark-apps", "lark-attendance", "lark-base", "lark-calendar", "lark-contact", "lark-doc", "lark-drive", "lark-event", "lark-im", "lark-mail", "lark-markdown", "lark-minutes", "lark-okr", "lark-openapi-explorer", "lark-shared", "lark-sheets", "lark-skill-maker", "lark-slides", "lark-task", "lark-vc", "lark-vc-agent", "lark-whiteboard", "lark-wiki", "lark-workflow-meeting-summary", "lark-workflow-standup-report"]
+      "skills": [
+        "lark-approval",
+        "lark-apps",
+        "lark-attendance",
+        "lark-base",
+        "lark-calendar",
+        "lark-contact",
+        "lark-doc",
+        "lark-drive",
+        "lark-event",
+        "lark-im",
+        "lark-mail",
+        "lark-markdown",
+        "lark-minutes",
+        "lark-okr",
+        "lark-openapi-explorer",
+        "lark-shared",
+        "lark-sheets",
+        "lark-skill-maker",
+        "lark-slides",
+        "lark-task",
+        "lark-vc",
+        "lark-vc-agent",
+        "lark-whiteboard",
+        "lark-wiki",
+        "lark-workflow-meeting-summary",
+        "lark-workflow-standup-report"
+      ]
     },
     {
       "name": "skill-tools",
       "version": "1.0.0",
       "description": "Skill 创建、优化、提取工具集",
-      "skills": ["skill-creator", "skill-optimizer", "workflow-extractor"]
+      "skills": [
+        "skill-creator",
+        "skill-optimizer",
+        "workflow-extractor"
+      ]
     },
     {
       "name": "any-file",
       "version": "1.0.0",
       "description": "多模态文件处理工具集：文档、图片、表格、演示文稿、PDF、语音转知识",
-      "skills": ["docx", "pdf", "pptx", "xlsx", "voice-text-to-knowledge", "text-declutter"]
+      "skills": [
+        "docx",
+        "pdf",
+        "pptx",
+        "xlsx",
+        "voice-text-to-knowledge",
+        "text-declutter"
+      ]
     },
     {
       "name": "obsidian",
       "version": "1.0.0",
       "description": "Obsidian 知识库专用工具",
-      "skills": ["obsidian-knowledge-saver"]
+      "skills": [
+        "obsidian-knowledge-saver"
+      ]
     },
     {
       "name": "product",
       "version": "1.0.0",
       "description": "产品工作流工具集：PRD、竞品分析、产品拆解、创业点子",
-      "skills": ["ai-agent-prd-writer", "ai-product-teardown", "product-insight-miner", "startup-ideation", "teardown-doc-writer", "vibe-prd-writer", "vibe-coding"]
+      "skills": [
+        "ai-agent-prd-writer",
+        "ai-product-teardown",
+        "product-insight-miner",
+        "startup-ideation",
+        "teardown-doc-writer",
+        "vibe-prd-writer",
+        "vibe-coding"
+      ]
     },
     {
       "name": "writing",
       "version": "1.0.0",
       "description": "写作与内容创作工具集",
-      "skills": ["oliver-article-cowriter", "frontend-slides", "personal-productivity", "working-backwards"]
+      "skills": [
+        "oliver-article-cowriter",
+        "frontend-slides",
+        "personal-productivity",
+        "working-backwards"
+      ]
     },
     {
       "name": "learning",
       "version": "1.0.0",
       "description": "学习与知识管理工具集",
-      "skills": ["48h-accelerated-learning", "interactive-learning"]
+      "skills": [
+        "48h-accelerated-learning",
+        "interactive-learning"
+      ]
     },
     {
       "name": "interview",
       "version": "1.0.0",
       "description": "面试准备与求职工具集",
-      "skills": ["ai-pm-interview-diagnosis", "ai-pm-resume-writer", "interview-script-generator", "interview-replay"]
+      "skills": [
+        "ai-pm-interview-diagnosis",
+        "ai-pm-resume-writer",
+        "interview-script-generator",
+        "interview-replay"
+      ]
     },
     {
       "name": "goals",
       "version": "1.0.0",
       "description": "目标与 OKR 管理工具集",
-      "skills": ["setting-okrs-goals"]
+      "skills": [
+        "setting-okrs-goals"
+      ]
     },
     {
       "name": "others",
       "version": "1.0.0",
       "description": "其他工具",
-      "skills": ["ai-evals", "ai-news-digest", "notebooklm", "notebooklm-rag", "schedule"]
+      "skills": [
+        "ai-evals",
+        "ai-news-digest",
+        "notebooklm",
+        "notebooklm-rag",
+        "schedule"
+      ]
     }
-  ]
+  ],
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "owner": {
+    "name": "ryholiver",
+    "email": "ryholiver@users.noreply.github.com"
+  }
 }
