@@ -1,5 +1,8 @@
 {
   "name": "writing",
-  "version": "1.0.0",
-  "description": "写作与内容创作工具集"
+  "description": "写作与内容创作工具集",
+  "author": {
+    "name": "ryholiver",
+    "email": "ryholiver@users.noreply.github.com"
+  }
 }

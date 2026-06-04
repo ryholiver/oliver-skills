@@ -1,5 +1,8 @@
 {
   "name": "obsidian",
-  "version": "1.0.0",
-  "description": "Obsidian 知识库专用工具"
+  "description": "Obsidian 知识库专用工具",
+  "author": {
+    "name": "ryholiver",
+    "email": "ryholiver@users.noreply.github.com"
+  }
 }
