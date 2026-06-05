@@ -41,12 +41,21 @@
     },
     {
       "name": "product",
-      "description": "产品工作流工具集：PRD、竞品分析、产品拆解、创业点子",
+      "description": "传统产品工作流（人开发流程）：PRD、竞品分析、产品拆解、创业点子",
       "author": {
         "name": "ryholiver",
         "email": "ryholiver@users.noreply.github.com"
       },
       "source": "./product"
+    },
+    {
+      "name": "pre-coding",
+      "description": "编码前准备工作：场景对齐 → 需求精炼，为进入编码阶段做准备",
+      "author": {
+        "name": "ryholiver",
+        "email": "ryholiver@users.noreply.github.com"
+      },
+      "source": "./pre-coding"
     },
     {
       "name": "writing",
