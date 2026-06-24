@@ -1,0 +1,9 @@
+{
+  "name": "goals",
+  "description": "目标与 OKR 管理工具集",
+  "version": "1.0.0",
+  "author": {
+    "name": "ryholiver",
+    "email": "ryholiver@users.noreply.github.com"
+  }
+}

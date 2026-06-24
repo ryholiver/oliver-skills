@@ -1,0 +1,9 @@
+{
+  "name": "feishu",
+  "description": "Feishu integration plugin",
+  "version": "1.0.0",
+  "author": {
+    "name": "ryholiver",
+    "email": "ryholiver@users.noreply.github.com"
+  }
+}

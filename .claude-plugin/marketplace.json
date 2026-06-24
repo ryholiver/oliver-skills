@@ -1,0 +1,122 @@
+{
+  "name": "oliver-skills",
+  "version": "1.0.0",
+  "description": "Oliver's personal Skills Marketplace",
+  "plugins": [
+    {
+      "name": "any-file",
+      "description": "多模态文件处理工具集：文档、图片、表格、演示文稿、PDF、语音转知识",
+      "version": "1.0.0",
+      "author": {
+        "name": "ryholiver",
+        "email": "ryholiver@users.noreply.github.com"
+      },
+      "source": "./any-file"
+    },
+    {
+      "name": "feishu",
+      "description": "飞书生态全栈工具集",
+      "version": "1.0.0",
+      "author": {
+        "name": "ryholiver",
+        "email": "ryholiver@users.noreply.github.com"
+      },
+      "source": "./feishu"
+    },
+    {
+      "name": "goals",
+      "description": "目标与 OKR 管理工具集",
+      "version": "1.0.0",
+      "author": {
+        "name": "ryholiver",
+        "email": "ryholiver@users.noreply.github.com"
+      },
+      "source": "./goals"
+    },
+    {
+      "name": "interview",
+      "description": "面试准备与求职工具集",
+      "version": "1.0.0",
+      "author": {
+        "name": "ryholiver",
+        "email": "ryholiver@users.noreply.github.com"
+      },
+      "source": "./interview"
+    },
+    {
+      "name": "learning",
+      "description": "学习与知识管理工具集",
+      "version": "1.0.0",
+      "author": {
+        "name": "ryholiver",
+        "email": "ryholiver@users.noreply.github.com"
+      },
+      "source": "./learning"
+    },
+    {
+      "name": "obsidian",
+      "description": "Obsidian 知识库专用工具",
+      "version": "1.0.0",
+      "author": {
+        "name": "ryholiver",
+        "email": "ryholiver@users.noreply.github.com"
+      },
+      "source": "./obsidian"
+    },
+    {
+      "name": "others",
+      "description": "其他工具",
+      "version": "1.0.0",
+      "author": {
+        "name": "ryholiver",
+        "email": "ryholiver@users.noreply.github.com"
+      },
+      "source": "./others"
+    },
+    {
+      "name": "pre-coding",
+      "description": "编码前准备工作：场景对齐 → 需求精炼，为进入编码阶段做准备",
+      "version": "1.0.0",
+      "author": {
+        "name": "ryholiver",
+        "email": "ryholiver@users.noreply.github.com"
+      },
+      "source": "./pre-coding"
+    },
+    {
+      "name": "product",
+      "description": "产品工作流工具集",
+      "version": "1.0.0",
+      "author": {
+        "name": "ryholiver",
+        "email": "ryholiver@users.noreply.github.com"
+      },
+      "source": "./product"
+    },
+    {
+      "name": "skill-tools",
+      "description": "Skill 创建、优化、提取工具集",
+      "version": "1.0.0",
+      "author": {
+        "name": "ryholiver",
+        "email": "ryholiver@users.noreply.github.com"
+      },
+      "source": "./skill-tools"
+    },
+    {
+      "name": "writing",
+      "description": "写作与内容创作工具集",
+      "version": "1.0.0",
+      "author": {
+        "name": "ryholiver",
+        "email": "ryholiver@users.noreply.github.com"
+      },
+      "source": "./writing"
+    }
+  ],
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "owner": {
+    "name": "ryholiver",
+    "email": "ryholiver@users.noreply.github.com"
+  }
+}

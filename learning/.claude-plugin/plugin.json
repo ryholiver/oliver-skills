@@ -1,0 +1,9 @@
+{
+  "name": "learning",
+  "description": "学习与知识管理工具集",
+  "version": "1.0.0",
+  "author": {
+    "name": "ryholiver",
+    "email": "ryholiver@users.noreply.github.com"
+  }
+}

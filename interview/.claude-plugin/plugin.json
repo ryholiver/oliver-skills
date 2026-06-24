@@ -1,0 +1,9 @@
+{
+  "name": "interview",
+  "description": "Interview prep and job search plugin",
+  "version": "1.0.0",
+  "author": {
+    "name": "ryholiver",
+    "email": "ryholiver@users.noreply.github.com"
+  }
+}

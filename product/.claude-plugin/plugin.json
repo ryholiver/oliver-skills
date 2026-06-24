@@ -1,0 +1,9 @@
+{
+  "name": "product",
+  "description": "产品工作流工具集",
+  "version": "1.0.0",
+  "author": {
+    "name": "ryholiver",
+    "email": "ryholiver@users.noreply.github.com"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "name": "any-file",
+  "description": "文档、图片、表格、演示文稿处理工具集",
+  "version": "1.0.0",
+  "author": {
+    "name": "ryholiver",
+    "email": "ryholiver@users.noreply.github.com"
+  }
+}

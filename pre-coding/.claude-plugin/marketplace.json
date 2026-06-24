@@ -1,0 +1,20 @@
+{
+  "name": "pre-coding",
+  "description": "编码前准备工作：场景对齐 → 需求精炼，为进入编码阶段做准备",
+  "owner": {
+    "name": "ryholiver",
+    "email": "ryholiver@users.noreply.github.com"
+  },
+  "plugins": [
+    {
+      "name": "pre-coding",
+      "description": "编码前准备工作：场景对齐 → 需求精炼，为进入编码阶段做准备",
+      "version": "1.0.0",
+      "source": "./",
+      "author": {
+        "name": "ryholiver",
+        "email": "ryholiver@users.noreply.github.com"
+      }
+    }
+  ]
+}
