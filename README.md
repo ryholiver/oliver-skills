@@ -9,6 +9,7 @@ Oliver 的个人技能插件合集。
 - [goals](goals/) - 目标与 OKR 管理工具集
 - [interview](interview/) - 面试准备与求职工具集
 - [learning](learning/) - 学习与知识管理工具集
+- [mmx-cli](mmx-cli/) - MiniMax AI 多模态生成 CLI
 - [obsidian](obsidian/) - Obsidian 知识库专用工具
 - [others](others/) - 其他工具
 - [pre-coding](pre-coding/) - 编码前准备工作

@@ -54,6 +54,16 @@
       "source": "./learning"
     },
     {
+      "name": "mmx-cli",
+      "description": "MiniMax AI 多模态生成 CLI：通过 mmx 生成文本、图片、视频、语音、音乐，并执行 web 搜索、管理 MiniMax API 资源",
+      "version": "1.0.0",
+      "author": {
+        "name": "ryholiver",
+        "email": "ryholiver@users.noreply.github.com"
+      },
+      "source": "./mmx-cli"
+    },
+    {
       "name": "obsidian",
       "description": "Obsidian 知识库专用工具",
       "version": "1.0.0",
