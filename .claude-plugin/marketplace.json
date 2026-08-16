@@ -4,6 +4,16 @@
   "description": "Oliver's personal Skills Marketplace",
   "plugins": [
     {
+      "name": "dingtalk",
+      "description": "钉钉生态全栈工具集",
+      "version": "1.0.0",
+      "author": {
+        "name": "ryholiver",
+        "email": "ryholiver@users.noreply.github.com"
+      },
+      "source": "./dingtalk"
+    },
+    {
       "name": "any-file",
       "description": "多模态文件处理工具集：文档、图片、表格、演示文稿、PDF、语音转知识",
       "version": "1.0.0",
