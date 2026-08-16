@@ -1,77 +1,101 @@
 ---
 name: setting-okrs-goals
-description: Help users set effective OKRs and goals. Use when someone is creating quarterly objectives, defining key results, setting team goals, planning annual targets, or struggling with goal alignment across their organization.
+description: 帮助用户制定有效的 OKR 和目标。当有人正在制定季度目标、定义关键结果、设定团队目标、规划年度目标，或在跨组织对齐目标上遇到困难时使用。
 ---
 
-# Setting OKRs & Goals
+# 设定 OKR 与目标
 
-Help the user create effective objectives and key results using frameworks and insights from 55 product leaders.
+运用 55 位产品 leader 的框架和洞察，帮助用户制定有效的目标（Objectives）与关键结果（Key Results）。
 
-## How to Help
+## 如何提供帮助
 
-When the user asks for help with OKRs or goal setting:
+当用户请求 OKR 或目标设定方面的帮助时：
 
-1. **Understand context** - Ask about their company stage, team size, and whether they have existing goals or are starting fresh
-2. **Clarify the level** - Determine if these are company, department, team, or individual goals
-3. **Identify the strategy** - Ensure they have a clear strategy before setting goals (goals should be the end of strategy, not the beginning)
-4. **Guide the structure** - Help them write inspiring objectives and measurable key results that avoid common pitfalls
+1. **收集资料** - 主动获取设定 OKR 所需的背景资料（见下方"资料获取机制"），而非仅靠口头问答
+2. **了解背景** - 结合已获取的资料，询问公司所处阶段、团队规模，以及已有目标还是从零开始
+3. **明确层级** - 确定这是公司、部门、团队还是个人目标
+4. **识别战略** - 确保他们在设定目标前有清晰的战略（目标应是战略的终点，而非起点）
+5. **引导结构** - 帮助他们写出鼓舞人心的目标（Objective）和可衡量的关键结果（Key Result），避免常见陷阱
 
-## Core Principles
+## 资料获取机制
 
-### Goals should be one step from company goals
-Matt LeMay: "No more than one step away from company goals. Don't let it get cascaded into oblivion." Ensure team goals orbit directly around the primary company objective rather than being buried under layers of organizational cascading.
+设定 OKR 前，主动从多种来源收集背景资料，而非只依赖对话。
 
-### Build systems, not just goals
-Lane Shackleton: "Instead of being obsessed with the goal, be obsessed with the system that gets you there." Replace one-time OKR targets with recurring 'default-on' systems like standing customer meetings that build long-term instincts.
+**获取方式（资料来源清单待补充，后续逐步完善）：**
+- **用户提供文件** - 请用户上传或提供相关文档（如战略规划、KPI 报表、历史 OKR、组织架构等）
+- **飞书获取** - 从飞书中获取相关信息（文档、表格、群消息等，具体入口后续补充）
+- **会议资料** - 读取相关会议纪要或录音转写（具体来源后续补充）
+- **其他来源** - 待补充
 
-### OKRs bridge strategy to execution
-Christina Wodtke: "The main benefit is that there's a lot of concrete action through an OKR that you don't always get from strategy." Use OKRs to turn abstract strategy into concrete quarterly numbers while creating a learning cycle through end-of-quarter grading.
+**获取原则：**
+- 获取资料前先说明需要什么、为什么，并经用户确认
+- 资料不足时宁可多问，也不要凭猜测编写目标
+- 若某项来源尚未接入，向用户说明并请求其提供
 
-### Triangulate with three key results
-Christina Wodtke: "I like three. Something that's really hardcore numbers, something that's a little squishier like quality, and something that involves a dollar sign." Balance quantitative, qualitative, and financial metrics for a complete view of success.
+## 核心原则
 
-### Use absolute numbers, not ratios
-Archie Abrams: "Ratios and percentages are dangerous metrics because they can be 'gamed' by reducing the denominator." Shift goals from 'conversion rate' to 'absolute number of users reaching a specific state' to prevent gaming.
+### 目标应只与公司目标相隔一步
+Matt LeMay："与公司目标之间不要超过一步。别让它在层层级联中被稀释殆尽。"确保团队目标直接围绕公司首要目标展开，而不是埋没在多层的组织级联之下。
 
-### Ambitious goals force new thinking
-Daniel Lereya: "Put ambitious goals, it'll make you think differently. We really love to do it even when we don't know it's possible." Set goals impossible to achieve through 'working harder' alone to force 'working smarter' and fundamental rethinks.
+### 构建系统，而不只是目标
+Lane Shackleton："与其痴迷于目标，不如痴迷于通往目标的系统。"用周期性的"默认开启"系统（如固定客户会议）取代一次性的 OKR 指标，从而建立起长期本能。
 
-### Separate strategy from OKR discussions
-Lane Shackleton: "OKRs are not actually strategy. It's critical to disconnect strategy discussions from OKR discussions." Create a distinct strategy ritual before OKR planning to ensure the 'why' isn't lost in the 'what'.
+### OKR 是战略到执行的桥梁
+Christina Wodtke："OKR 最大的好处是它带来了很多具体的行动，这是纯战略往往给不了的。"用 OKR 将抽象战略转化为具体的季度数字，同时通过季度末评分形成学习循环。
 
-### Limit planning overhead
-Lane Shackleton: "The 10% planning rule - ensure you're not planning for more than 10% of that execution period." If planning for a quarter, spend no more than about a week on the planning process.
+### 用三个关键结果交叉验证
+Christina Wodtke："我喜欢三个。一个是硬核数字，一个是稍软一点的、比如质量，还有一个要涉及钱。"平衡量化、质化和财务指标，才能完整衡量成功。
 
-### Focus on outcomes, not outputs
-Marty Cagan: "In a real product team, you celebrate when you actually solve the problem. That's why we say product teams are about outcomes, not output." Define success by problem resolution rather than feature shipment.
+### 用绝对数字，而非比率
+Archie Abrams："比率和百分比是危险的指标，因为可以通过缩小分母来'作弊'。"把目标从'转化率'改为'达到特定状态的用户绝对数量'，以防被操纵。
 
-### Goals are communication tools
-Molly Graham: "No company needs more than three company goals. The point is to help people know what the most important things are." Keep goals simple, ensure one wins in a fight, and assign exactly one owner to every goal.
+### 雄心勃勃的目标倒逼新思路
+Daniel Lereya："定下宏大的目标，它会让你用不同的方式思考。即使我们不知道是否可行，我们也非常乐意这么做。"设定仅靠'更努力地干活'无法实现的目标，迫使团队'更聪明地工作'，进行根本性的重新思考。
 
-## Questions to Help Users
+### 将战略讨论与 OKR 讨论分开
+Lane Shackleton："OKR 实际上并不是战略。关键在于把战略讨论和 OKR 讨论分开。"在 OKR 规划之前建立独立的战略仪式，确保'为什么'不会淹没在'做什么'里。
 
-- "What is your company's primary goal right now, and how does this team goal connect to it?"
-- "How will you know if you've succeeded - what specific number would change?"
-- "Is this objective inspiring enough to motivate the team through obstacles?"
-- "Are your key results outcomes (how you know you succeeded) or tasks (a to-do list)?"
-- "What system could you build to make progress on this goal 'default-on'?"
-- "If you achieve this goal but hurt user experience, would it still be a success?"
+### 控制规划开销
+Lane Shackleton："10% 规划法则——确保你的规划时间不超过执行周期的 10%。"如果为一个季度做规划，规划过程不要超过一周左右。
 
-## Common Mistakes to Flag
+### 关注结果（Outcomes），而非产出（Outputs）
+Marty Cagan："在真正的产品团队里，只有真正解决了问题才会庆祝。这就是为什么我们说产品团队看重的是结果而非产出。"成功与否以问题是否被解决来定义，而不是看功能交付了多少。
 
-- **Key results that are tasks** - Key results should be measurable outcomes, not a checklist of activities to complete
-- **Too many goals** - Companies need no more than three goals; more than that dilutes focus and prevents trade-offs
-- **Vague objectives** - Objectives should make you excited to get out of bed, not generic corporate language
-- **Goals set before strategy** - If you don't have a real strategy, OKRs become meaningless exercises in false precision
-- **Over-indexing on a single metric** - This can incentivize keeping customer-hostile features that happen to move the number
+### 目标是沟通工具
+Molly Graham："没有公司需要超过三个公司目标。关键在于让人们知道最重要的事情是什么。"保持目标简单，当目标之间冲突时确保有明确取舍，并为每个目标指定唯一负责人。
 
-## Deep Dive
+## 可用来引导用户的问题
 
-For all 74 insights from 55 guests, see `references/guest-insights.md`
+按流程环节使用，每环取对应问题追问：
 
-## Related Skills
+- **【第 3 步·明确层级】** "你们公司当前的首要目标是什么？这个团队目标如何与之关联？"
+- **【第 5 步·引导结构·写 KR】** "你如何知道已经成功了——具体是哪个数字会发生变化？"
+- **【第 5 步·引导结构·写 O】** "这个目标是否足够鼓舞人心，能让团队在困难面前依然保持动力？"
+- **【第 5 步·引导结构·写 KR】** "你的关键结果是结果（你如何判断成功）还是任务（一份待办清单）？"
+- **【第 5 步·引导结构·落地机制】** "你可以构建什么系统，让这个目标的推进'默认开启'？"
+- **【第 5 步·引导结构·校验】** "如果你达成了这个目标但损害了用户体验，它还算成功吗？"
 
-- Writing North Star Metrics
-- Defining Product Vision
-- Prioritizing Roadmap
-- Stakeholder Alignment
+## 需要提醒的常见错误
+
+- **把任务当成关键结果** - 关键结果应该是可衡量的结果，而不是一串待完成的活动清单
+- **目标太多** - 公司目标不超过三个；更多只会稀释焦点、妨碍取舍
+- **目标含糊不清** - 目标应该让你一早就充满干劲，而不是泛泛而谈的官话
+- **先定目标、后定战略** - 如果没有真正的战略，OKR 就沦为虚有其表的数字游戏
+- **过度依赖单一指标** - 这可能会激励团队保留那些碰巧能拉动数字但对客户不利的功能
+
+## 深入阅读
+
+`references/guest-insights.md` 保存了 55 位嘉宾共 74 条洞察的完整详细版（含原话、洞察与战术建议）。
+
+**使用规则（必须遵守）：**
+1. 默认不要读取此文件，优先使用本文件的精简内容
+2. 只有在本文件内容无法满足用户需求、需要更深细节时，才可以考虑查询
+3. 查询前必须先用 AskUserQuestion 向用户说明**查询理由**并征求允许，得到用户同意后才可读取
+4. 未经用户允许，禁止读取 `references/guest-insights.md`
+
+## 相关技能
+
+- 撰写北极星指标（Writing North Star Metrics）
+- 定义产品愿景（Defining Product Vision）
+- 排定路线图优先级（Prioritizing Roadmap）
+- 干系人对齐（Stakeholder Alignment）
