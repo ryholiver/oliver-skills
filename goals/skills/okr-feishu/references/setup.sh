@@ -1,28 +1,34 @@
 #!/usr/bin/env bash
 # okr-feishu setup：对齐「🟡 个人 OKR 执行与复盘」模板到当前周期（幂等、增量、可复跑）
 #
+# 数据模型 = 演进中的用户数据，默认在【当前目录】okr-model.json（不在 skill 内）。
+# 当前目录没有模型时，自动从 skill 的 seed（okr-model.default.json）复制一份。
+#
 # 用法：
-#   ./setup.sh                      # 默认：给两张表「季度」补当前周期选项 + 落快照
-#   ./setup.sh --sync-model         # 只读：全量读表 diff，更新 okr-model.json + 快照（= /okr-sync）
+#   ./setup.sh                      # 默认：物化模型 + 给两张表「季度」补当前周期选项 + 落快照
+#   ./setup.sh --ensure-model       # 仅物化模型（当前目录无则从 seed 复制），不读表、不改表
+#   ./setup.sh --sync-model         # 只读：全量读表 diff，更新【工作副本】okr-model.json + 快照（= /okr-sync）
 #   ./setup.sh --ensure-fields      # 除默认对齐外，补缺的必需字段（只增）
 #   ./setup.sh --clean-samples      # 除默认对齐外，删除 2022 模板示例数据（不可逆！）
 #
-# 环境变量：BASE_TOKEN / CYCLE / MODEL_JSON / SNAPSHOT_DIR
+# 环境变量：BASE_TOKEN / CYCLE / MODEL_JSON / SNAPSHOT_DIR / SEED_JSON
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BASE_TOKEN="${BASE_TOKEN:-BCC3bXivFaq2DBs1UbucpyWvn3c}"
 CYCLE="${CYCLE:-2026-Q3}"
-MODEL_JSON="${MODEL_JSON:-$SCRIPT_DIR/okr-model.json}"
-SNAPSHOT_DIR="${SNAPSHOT_DIR:-$SCRIPT_DIR/snapshots}"
+MODEL_JSON="${MODEL_JSON:-$PWD/okr-model.json}"
+SNAPSHOT_DIR="${SNAPSHOT_DIR:-$PWD/okr-snapshots}"
+SEED_JSON="${SEED_JSON:-$SCRIPT_DIR/okr-model.default.json}"
 
-SYNC=0; ENSURE=0; CLEAN=0
+SYNC=0; ENSURE=0; CLEAN=0; ENSURE_MODEL=0
 for a in "$@"; do
   case "$a" in
     --sync-model) SYNC=1 ;;
     --ensure-fields) ENSURE=1 ;;
     --clean-samples) CLEAN=1 ;;
-    *) echo "未知参数: $a（支持 --sync-model / --ensure-fields / --clean-samples）" >&2; exit 2 ;;
+    --ensure-model) ENSURE_MODEL=1 ;;
+    *) echo "未知参数: $a（支持 --sync-model / --ensure-fields / --clean-samples / --ensure-model）" >&2; exit 2 ;;
   esac
 done
 
@@ -33,6 +39,27 @@ if ! lark-cli auth check --scope "$REQUIRED_SCOPES" >/dev/null 2>&1; then
   exit 1
 fi
 echo "OK（identity: user）"
+
+# 物化数据模型：当前目录无模型时，从 skill 的 seed 复制一份（只增不覆盖已有演进）
+if [ ! -f "$MODEL_JSON" ]; then
+  if [ ! -f "$SEED_JSON" ]; then
+    echo "错误：找不到 seed 模型 $SEED_JSON" >&2
+    exit 1
+  fi
+  mkdir -p "$(dirname "$MODEL_JSON")"
+  cp "$SEED_JSON" "$MODEL_JSON"
+  echo "== 0. 物化数据模型（当前目录无 okr-model.json，已从 seed 复制）=="
+  echo "    → $MODEL_JSON"
+else
+  echo "== 0. 数据模型已存在（演进保留）=="
+  echo "    → $MODEL_JSON"
+fi
+
+if [ "$ENSURE_MODEL" = "1" ]; then
+  MODEL_VERSION="$(grep -oE '"version"[[:space:]]*:[[:space:]]*[0-9]+' "$MODEL_JSON" | grep -oE '[0-9]+' | head -1)"
+  echo "模型就绪: $MODEL_JSON (version=$MODEL_VERSION)，可用 /okr-sync 同步模板最新结构"
+  exit 0
+fi
 
 export OKR_BASE_TOKEN="$BASE_TOKEN" OKR_CYCLE="$CYCLE" OKR_MODEL_JSON="$MODEL_JSON" \
        OKR_SNAPSHOT_DIR="$SNAPSHOT_DIR" OKR_SYNC="$SYNC" OKR_ENSURE="$ENSURE" OKR_CLEAN="$CLEAN"

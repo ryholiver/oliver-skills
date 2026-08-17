@@ -1,0 +1,5 @@
+# 用户侧产物，不进 skill 仓库
+# 演进中的工作副本（默认在用户当前目录，若误建在此也忽略）
+okr-model.json
+# 结构快照（默认在用户当前目录 okr-snapshots/）
+snapshots/
