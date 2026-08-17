@@ -1,0 +1,146 @@
+{
+  "version": 2,
+  "base_token": "BCC3bXivFaq2DBs1UbucpyWvn3c",
+  "base_name": "🟡 个人 OKR 执行与复盘",
+  "updated_at": "2026-08-16",
+  "tables": {
+    "目标管理": {
+      "table_id": "tbljBIOMT63u4sQz",
+      "role": "objectives",
+      "fields": [
+        {
+          "semantic": "period",
+          "preferred_names": [
+            "季度"
+          ],
+          "required": true,
+          "type": "select",
+          "note": "OKR 周期，格式 YYYY-Qn"
+        },
+        {
+          "semantic": "objective",
+          "preferred_names": [
+            "O"
+          ],
+          "required": true,
+          "type": "text",
+          "note": "目标一句话"
+        }
+      ]
+    },
+    "OKR": {
+      "table_id": "tblV1ORKFPGs9DBq",
+      "role": "key_results",
+      "fields": [
+        {
+          "semantic": "objective_link",
+          "preferred_names": [
+            "目标"
+          ],
+          "required": true,
+          "type": "link",
+          "note": "关联目标管理记录，CellValue 写 [{\"id\":\"<record_id>\"}]"
+        },
+        {
+          "semantic": "key_result",
+          "preferred_names": [
+            "OKR",
+            "关键结果"
+          ],
+          "required": true,
+          "type": "text"
+        },
+        {
+          "semantic": "period",
+          "preferred_names": [
+            "季度"
+          ],
+          "required": true,
+          "type": "select"
+        },
+        {
+          "semantic": "status",
+          "preferred_names": [
+            "状态"
+          ],
+          "required": true,
+          "type": "select",
+          "options": [
+            "未开始",
+            "进行中",
+            "延期",
+            "已完成"
+          ]
+        },
+        {
+          "semantic": "owner",
+          "preferred_names": [
+            "负责人"
+          ],
+          "optional": true,
+          "type": "user"
+        },
+        {
+          "semantic": "start",
+          "preferred_names": [
+            "开始时间"
+          ],
+          "optional": true,
+          "type": "datetime"
+        },
+        {
+          "semantic": "due",
+          "preferred_names": [
+            "完成时间"
+          ],
+          "optional": true,
+          "type": "datetime"
+        },
+        {
+          "semantic": "review_good",
+          "preferred_names": [
+            "复盘：做的好的"
+          ],
+          "optional": true,
+          "type": "text"
+        },
+        {
+          "semantic": "review_improve",
+          "preferred_names": [
+            "复盘：有待提升"
+          ],
+          "optional": true,
+          "type": "text"
+        },
+        {
+          "semantic": "output_doc",
+          "preferred_names": [
+            "输出文档"
+          ],
+          "optional": true,
+          "type": "text"
+        },
+        {
+          "semantic": "field_4月24日",
+          "preferred_names": [
+            "4月24日"
+          ],
+          "required": false,
+          "type": "text",
+          "deprecated": false,
+          "auto_discovered": true
+        },
+        {
+          "semantic": "field_周期",
+          "preferred_names": [
+            "周期"
+          ],
+          "required": false,
+          "type": "select",
+          "deprecated": false,
+          "auto_discovered": true
+        }
+      ]
+    }
+  }
+}

@@ -99,3 +99,55 @@ Molly Graham："没有公司需要超过三个公司目标。关键在于让人�
 - 定义产品愿景（Defining Product Vision）
 - 排定路线图优先级（Prioritizing Roadmap）
 - 干系人对齐（Stakeholder Alignment）
+- `goals:okr-feishu`（OKR 制定 → 飞书多维表格写入编排层）
+
+## 输出契约（数字中转站）
+
+完成上述引导后，**除了对话建议，必须在末尾输出唯一一个 JSON 代码块**，作为「数字中转站」数据。该 JSON **与任何存储系统（如飞书多维表格）解耦**，下游编排层（如 `goals:okr-feishu`）直接消费它写表。
+
+```json
+{
+  "period": "2026-Q3",
+  "objectives": [
+    {
+      "objective": "提升产品留存",
+      "level": "个人",
+      "owner": {"open_id": "ou_7c81df7a7e93d9c5cd5679d54e908004"},
+      "key_results": [
+        {
+          "key_result": "次日留存率 45%→55%",
+          "kr_type": "数量",
+          "metric": "次日留存率",
+          "baseline": 45,
+          "target": 55,
+          "status": "进行中",
+          "start": "2026-07-01 00:00:00",
+          "due": "2026-09-30 00:00:00"
+        }
+      ]
+    }
+  ]
+}
+```
+
+**字段说明**
+
+| 字段 | 说明 |
+|---|---|
+| `period` | OKR 周期，`YYYY-Qn`（如 2026-Q3）；用户未说明时用当前季度 |
+| `level` | 公司 / 部门 / 团队 / 个人；默认「个人」 |
+| `owner.open_id` | 负责人飞书 open_id；默认本人，不确定时用 lark-cli `contact +search-user` 查 |
+| `key_results[].key_result` | KR 一句话（可度量结果，不是任务） |
+| `key_results[].kr_type` | 数量 / 质量 / 财务（KR 三角） |
+| `key_results[].metric` `baseline` `target` | 量化指标名 + 起始/目标**绝对值** |
+| `key_results[].status` | 未开始 / 进行中 / 延期 / 已完成 |
+| `key_results[].start` `due` | `YYYY-MM-DD HH:mm:ss`；默认当前季度起止 |
+
+**产出时强制遵守（沿用本 skill 既有原则）**
+
+1. 每 O 配 **2~3 个 KR**；O 一句话、有感染力。
+2. KR 三角覆盖：数量 / 质量 / 财务，至少两类（`kr_type` 标注）。
+3. **绝对数不用比例**：`baseline`→`target` 用绝对量，防「分母游戏」。
+4. KR 是**可度量结果**，不是任务清单（不是 to-do）。
+5. 结果导向：以解决问题/达到状态为准，不以「发货了多少功能」为准。
+6. 用户没给的字段用默认值，并在 JSON 后的文字里注明哪些是可改项。
