@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "base_token": "BCC3bXivFaq2DBs1UbucpyWvn3c",
   "base_name": "🟡 个人 OKR 执行与复盘",
   "updated_at": "2026-08-17",
@@ -15,6 +15,7 @@
           ],
           "required": true,
           "type": "select",
+          "cell_shape": "string",
           "note": "OKR 周期，格式 YYYY-Qn"
         },
         {
@@ -24,6 +25,7 @@
           ],
           "required": true,
           "type": "text",
+          "cell_shape": "string",
           "note": "目标一句话"
         }
       ]
@@ -39,6 +41,7 @@
           ],
           "required": true,
           "type": "link",
+          "cell_shape": "object_array",
           "note": "关联目标管理记录，CellValue 写 [{\"id\":\"<record_id>\"}]"
         },
         {
@@ -48,7 +51,8 @@
             "关键结果"
           ],
           "required": true,
-          "type": "text"
+          "type": "text",
+          "cell_shape": "string"
         },
         {
           "semantic": "period",
@@ -56,7 +60,8 @@
             "季度"
           ],
           "required": true,
-          "type": "select"
+          "type": "select",
+          "cell_shape": "string"
         },
         {
           "semantic": "status",
@@ -65,6 +70,7 @@
           ],
           "required": true,
           "type": "select",
+          "cell_shape": "string",
           "options": [
             "未开始",
             "进行中",
@@ -78,7 +84,8 @@
             "负责人"
           ],
           "optional": true,
-          "type": "user"
+          "type": "user",
+          "cell_shape": "object_array"
         },
         {
           "semantic": "start",
@@ -86,7 +93,8 @@
             "开始时间"
           ],
           "optional": true,
-          "type": "datetime"
+          "type": "datetime",
+          "cell_shape": "string"
         },
         {
           "semantic": "due",
@@ -94,7 +102,8 @@
             "完成时间"
           ],
           "optional": true,
-          "type": "datetime"
+          "type": "datetime",
+          "cell_shape": "string"
         },
         {
           "semantic": "review_good",
@@ -102,7 +111,8 @@
             "复盘：做的好的"
           ],
           "optional": true,
-          "type": "text"
+          "type": "text",
+          "cell_shape": "string"
         },
         {
           "semantic": "review_improve",
@@ -110,7 +120,8 @@
             "复盘：有待提升"
           ],
           "optional": true,
-          "type": "text"
+          "type": "text",
+          "cell_shape": "string"
         },
         {
           "semantic": "output_doc",
@@ -118,7 +129,8 @@
             "输出文档"
           ],
           "optional": true,
-          "type": "text"
+          "type": "text",
+          "cell_shape": "string"
         },
         {
           "semantic": "field_4月24日",
@@ -127,6 +139,7 @@
           ],
           "required": false,
           "type": "text",
+          "cell_shape": "string",
           "deprecated": false,
           "auto_discovered": true
         },
@@ -137,6 +150,7 @@
           ],
           "required": false,
           "type": "select",
+          "cell_shape": "string",
           "deprecated": false,
           "auto_discovered": true
         }

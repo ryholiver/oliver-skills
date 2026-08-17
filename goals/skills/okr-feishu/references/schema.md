@@ -5,8 +5,9 @@
 - **Base**：🟡 个人 OKR 执行与复盘
 - **base_token**：`BCC3bXivFaq2DBs1UbucpyWvn3c`
 - **数据模型**：O 记录在「目标管理」表，KR 记录在「OKR」表；「OKR」表的「目标」字段（link）关联到「目标管理」的 O 记录。
-- **模型位置**：演进中的工作副本 `okr-model.json` 默认在【当前目录隐藏文件夹 `.okrsetting/`】（不在 skill 内）。skill 只带 seed 模板 `okr-model.default.json`；`.okrsetting/` 无模型时由 `setup.sh --ensure-model` 复制一份。之后所有读写都以工作副本为准，`/okr-sync` 也只更新工作副本。
+- **模型位置**：演进中的工作副本 `okr-model.json` 默认在【当前目录隐藏文件夹 `.okrsetting/`】（不在 skill 内）。skill 只带 seed 模板 `okr-model.default.json`；`.okrsetting/` 无模型时由 `scripts/setup.sh --ensure-model` 复制一份。之后所有读写都以工作副本为准，`/okr-sync` 也只更新工作副本。
 - **模型优先**：默认读写以工作副本 `.okrsetting/okr-model.json` 为准，不每次读表。本文件是**结构基线**的说明。
+- **cell_shape（CellValue 形状）**：模型每个字段带 `cell_shape`，写入脚本据此决定值形状——`link`/`user` → `object_array`（写 `[{"id":"..."}]`）、`select`/`text`/`datetime` → `string`、`number` → `number`、`checkbox` → `boolean`。旧模型缺该字段时按 `type` 自动推断（规则见下），补齐只是显式化。
 
 ## 基线表结构（2026-08-16）
 
@@ -14,7 +15,7 @@
 
 | 字段 | 类型 | 必需 | 说明 |
 |---|---|---|---|
-| 季度 | select | ✅ | 周期选项 `YYYY-Qn`，当前含 2022-Q1..Q4；`setup.sh` 会按 `CYCLE` 追加当前季度 |
+| 季度 | select | ✅ | 周期选项 `YYYY-Qn`，当前含 2022-Q1..Q4；`scripts/setup.sh` 会按 `CYCLE` 追加当前季度 |
 | O | text | ✅ | 目标一句话 |
 
 ### OKR（`tblV1ORKFPGs9DBq`，role: key_results）
@@ -49,13 +50,25 @@
 | `start` / `due` | OKR.开始时间 / OKR.完成时间 | `YYYY-MM-DD HH:mm:ss` |
 | `kr_type` / `metric` / `baseline` / `target` | 演进钩子：模板若新增量化字段（如 量化指标/目标值/当前值/权重）→ `/okr-sync` 自动纳入可选写入 | — |
 
+## 写入流程（`scripts/okr-write.sh`）
+
+模式 A 第 4 步统一走写入脚本，避免手拼 CellValue 的坑。脚本消费「中转站 JSON + 工作副本模型」，一次跑完 O→KR：
+
+1. **校验**：检查 `lark-cli` base 授权、relay/模型存在。
+2. **映射**：按工作副本 `semantic → preferred_names` 取字段名；`deprecated` 或缺失的必需字段报错（提示 `/okr-sync`）。
+3. **建 O**：`目标管理` 表 `+record-upsert`（季度 + O），拿每条 O 的 `record_id`。
+4. **批量建 KR**：`OKR` 表 `+record-batch-create`；`目标` link 字段写 `[{"id":"<O record_id>"}]`，`负责人` user 字段写 `[{"id":"ou_xxx"}]`（均由 `cell_shape` 自动包裹）。批量 payload 写当前目录 `.okrsetting/tmp/okr_kr_batch.json`，**用相对路径传给 lark-cli**——`@-`（stdin）与绝对路径都会被拒（本次测试实测）。
+5. **dry-run**：加 `--dry-run` 只做 2+字段校验与 O/KR 预览，不写表。真写前建议先跑一次。
+
+**cell_shape 推断规则**（模型缺字段时按 `type` 兜底）：`link`/`user` → `object_array`；`select`/`text`/`datetime` → `string`；`number` → `number`；`checkbox` → `boolean`。
+
 ## 演进规则（必读）
 
-1. **模型在用户侧**：工作副本 `okr-model.json` 默认在【当前目录隐藏文件夹 `.okrsetting/`】，不在 skill 里；skill 只带 seed `okr-model.default.json`，缺失时用 `setup.sh --ensure-model` 物化。这样 `/okr-sync` 的演进结果归用户所有，插件更新不会覆盖。
+1. **模型在用户侧**：工作副本 `okr-model.json` 默认在【当前目录隐藏文件夹 `.okrsetting/`】，不在 skill 里；skill 只带 seed `okr-model.default.json`，缺失时用 `scripts/setup.sh --ensure-model` 物化。这样 `/okr-sync` 的演进结果归用户所有，插件更新不会覆盖。
 2. **模型优先**：默认用工作副本，不每次读表（省时）。结构变化必须先同步。
 3. **只增不改不删**：写表 / 同步都只增量；不删字段、不改类型、不覆盖已有值；字段消失只标记 `deprecated: true`，历史定义保留。
-4. **显式同步**：模板变化（加字段/改名/换季度）时跑 `/okr-sync`（或 `setup.sh --sync-model`）→ 全量读 → diff → 更新工作副本 + 落快照。前期优化频繁多跑，稳定后偶尔跑。
+4. **显式同步**：模板变化（加字段/改名/换季度）时跑 `/okr-sync`（或 `scripts/setup.sh --sync-model`）→ 全量读 → diff → 更新工作副本 + 落快照。前期优化频繁多跑，稳定后偶尔跑。
 5. **快照**：每次同步/对齐后落 `.okrsetting/snapshots/snapshot-<日期>.json`（默认在【当前目录】），供 diff 与回看。
-6. **演进钩子**：`--sync-model` 遇到模型外的新字段，自动纳入为 `auto_discovered` 可选字段（不破坏既有定义），并提示可升级为正式语义映射。
+6. **演进钩子**：`--sync-model` 遇到模型外的新字段，自动纳入为 `auto_discovered` 可选字段（不破坏既有定义），并提示可升级为正式语义映射；新字段同步时按 `type` 补齐 `cell_shape`（推断规则见上）。
 7. **写失败回退**：写入报「字段不存在/字段名不匹配」→ 停止重试，提示用户跑 `/okr-sync`，或直接自动跑同步后重试。
-8. **对齐幂等**：`setup.sh` 可每季度复跑；`季度` 选项重复时跳过，不会重复追加。
+8. **对齐幂等**：`scripts/setup.sh` 可每季度复跑；`季度` 选项重复时跳过，不会重复追加。

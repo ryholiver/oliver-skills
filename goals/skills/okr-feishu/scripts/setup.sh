@@ -19,7 +19,7 @@ BASE_TOKEN="${BASE_TOKEN:-BCC3bXivFaq2DBs1UbucpyWvn3c}"
 CYCLE="${CYCLE:-2026-Q3}"
 MODEL_JSON="${MODEL_JSON:-$PWD/.okrsetting/okr-model.json}"
 SNAPSHOT_DIR="${SNAPSHOT_DIR:-$PWD/.okrsetting/snapshots}"
-SEED_JSON="${SEED_JSON:-$SCRIPT_DIR/okr-model.default.json}"
+SEED_JSON="${SEED_JSON:-$SCRIPT_DIR/../references/okr-model.default.json}"
 
 SYNC=0; ENSURE=0; CLEAN=0; ENSURE_MODEL=0
 for a in "$@"; do
