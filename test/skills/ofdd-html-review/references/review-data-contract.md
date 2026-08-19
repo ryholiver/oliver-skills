@@ -149,7 +149,7 @@ directions / recommendation / decision / unresolved / writeback
 }
 ```
 
-`tone` 只是页面展示分类，由 OFDD 的阻塞性和阻塞对象推导，不是新的问题状态。
+`tone` 只是页面展示分类，由 OFDD 的阻塞性和阻塞对象推导，不是新的问题状态。`blocking` 建议输出成可读文本，如“阻塞：decision、DIR-001”或“当前不阻塞”。
 
 ### 3.6 directions
 
@@ -162,11 +162,15 @@ directions / recommendation / decision / unresolved / writeback
   "benefits": ["支持理由一", "支持理由二"],
   "risk": "主要风险",
   "boundary": "范围与不包含内容",
+  "status": "待决策 / 探索中 / 已替代",
+  "reviewReady": true,
   "selected": false
 }
 ```
 
-`selected: true` 表示当前推荐或已选择方向。若只是推荐、尚未拍板，必须由 `decision.status` 明确区分。
+- `status` 用于展示方向当前所处阶段；
+- `reviewReady: true` 表示可进入本轮 Review，但不等于已经被推荐或批准；
+- `selected: true` 表示当前推荐或已选择方向。若只是推荐、尚未拍板，必须由 `decision.status` 明确区分。
 
 ### 3.7 recommendation
 

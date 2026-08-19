@@ -1593,6 +1593,10 @@
         <article class="direction-card ${direction.selected ? "is-recommended" : ""}" data-ofdd-id="${escapeHtml(direction.id)}">
           <span class="direction-letter">${escapeHtml(direction.letter)}</span>
           <span class="machine-id">${escapeHtml(direction.id)}</span>
+          <div class="direction-status-row">
+            <span class="status-chip ${direction.selected ? STATUS_CLASS.selected : STATUS_CLASS.pending}">${escapeHtml(direction.selected ? "当前推荐/已选" : direction.status || "待确认")}</span>
+            ${direction.reviewReady ? `<span class="status-chip ${STATUS_CLASS.supported}">可进入 Review</span>` : ""}
+          </div>
           <h3>${escapeHtml(direction.title)}</h3>
           <p class="direction-goal">${escapeHtml(direction.goal)}</p>
           <ul class="direction-list">
@@ -1664,6 +1668,8 @@
           ${sectionHeading("01", "目标与边界", "先确定这次 Review 要解决什么，再决定调用哪些 OFDD 内容。")}
           <div class="recommendation">
             <article class="recommendation-main">
+              <p class="eyebrow">Core Question</p>
+              <p class="summary-note">${escapeHtml(data.objective.question)}</p>
               <p class="eyebrow">Review Goal</p>
               <h3>${escapeHtml(data.objective.goal)}</h3>
               <p><strong>讨论范围：</strong>${escapeHtml(data.objective.scope)}</p>
@@ -1711,9 +1717,12 @@
             <div class="decision-meta">
               <div class="decision-meta-item"><span>状态</span><strong>${escapeHtml(data.decision.status)}</strong></div>
               <div class="decision-meta-item"><span>决策人 / 时间</span><strong>${escapeHtml(data.decision.decisionMaker)} / ${escapeHtml(data.decision.decidedAt)}</strong></div>
+              <div class="decision-meta-item"><span>已选方向</span><strong>${escapeHtml(data.decision.selected)}</strong></div>
+              <div class="decision-meta-item"><span>拒绝 / 暂缓</span><strong>${escapeHtml(data.decision.rejected)} / ${escapeHtml(data.decision.deferred)}</strong></div>
               <div class="decision-meta-item"><span>适用范围</span><strong>${escapeHtml(data.decision.scope)}</strong></div>
               <div class="decision-meta-item"><span>重评条件</span><strong>${escapeHtml(data.decision.reconsiderWhen)}</strong></div>
             </div>
+            <p><strong>决定依据：</strong>${escapeHtml(data.decision.rationale)}</p>
           </article>
         </section>
 

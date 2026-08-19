@@ -78,7 +78,7 @@ HTML 是特定时间点的展示快照，不是新的事实源。
 
 ### 3. 生成 Review 视图数据
 
-按 `references/review-data-contract.md` 创建 JSON 对象，至少包含：
+先读取并遵守 `references/ofdd-to-review-mapping.md`，再按 `references/review-data-contract.md` 创建 JSON 对象，至少包含：
 
 - `meta`
 - `objective`
@@ -100,7 +100,21 @@ HTML 是特定时间点的展示快照，不是新的事实源。
 - Direction 是候选行动指向，不是计划或 Todo；
 - Decision 必须区分拟议、已拍板、暂缓、撤销和替代。
 
-详细规则见 `references/review-generation-rules.md`。遇到术语或状态歧义时再读取该文件，不必每次全文加载。
+字段映射见 `references/ofdd-to-review-mapping.md`；详细生成规则见 `references/review-generation-rules.md`。遇到术语或状态歧义时再读取对应文件，不必每次全文加载。
+
+优先先跑转换脚本，再交给 HTML 渲染脚本：
+
+```bash
+python3 scripts/build_review_view.py \
+  --input /path/to/*-ofdd-data.json \
+  --output /path/to/[项目名]-review-view-data-[YYYY-MM-DD].json
+```
+
+可选参数：
+
+- `--focus-decision-id DEC-001`：指定本次 Review 的焦点 Decision；
+- `--review-id REV-YYYYMMDD-01`：显式指定 Review ID；
+- `--date YYYY-MM-DD`：固定 Review 生成日期。
 
 ### 4. 生成 HTML
 
@@ -108,7 +122,7 @@ HTML 是特定时间点的展示快照，不是新的事实源。
 
 ```bash
 python3 scripts/render_review.py \
-  --data /path/to/review-view-data.json \
+  --data /path/to/[项目名]-review-view-data-[YYYY-MM-DD].json \
   --output /path/to/[项目名]-Review-[YYYY-MM-DD].html
 ```
 
@@ -175,6 +189,8 @@ python3 scripts/render_review.py \
 ## 资源
 
 - `assets/review-template.html`：单文件 HTML 应用层模板。
+- `scripts/build_review_view.py`：把 OFDD JSON 转成 Review 视图 JSON。
 - `scripts/render_review.py`：把 Review 视图 JSON 嵌入模板。
-- `references/review-data-contract.md`：应用层数据字段与 OFDD 映射。
+- `references/review-data-contract.md`：Review View JSON 的应用层字段契约。
+- `references/ofdd-to-review-mapping.md`：OFDD JSON 到 Review View JSON 的通用映射、状态边界和转换校验。
 - `references/review-generation-rules.md`：Review 生成、表达、执行与回写规则。
