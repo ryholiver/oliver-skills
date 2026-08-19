@@ -1,0 +1,250 @@
+{
+  "_comment": "OFDD 结构化数据文件。用于下游 HTML Review skill 生成审查页面。模板中的双花括号字段需要在实际输出时替换。",
+  "schema_version": "1.0.0",
+  "ofdd_version": "v5",
+  "document_meta": {
+    "project_name": "{{project_name}}",
+    "title": "{{title}}",
+    "created_at": "{{created_at}}",
+    "updated_at": "{{updated_at}}",
+    "author": "{{author}}",
+    "status": "review_required",
+    "input_files": [
+      {
+        "path": "{{input_file_path}}",
+        "role": "source"
+      }
+    ],
+    "scope": "{{scope}}",
+    "out_of_scope": [
+      "不替用户拍板",
+      "不生成最终 HTML",
+      "不直接修改源材料"
+    ]
+  },
+  "sources": [
+    {
+      "id": "S-001",
+      "type": "document",
+      "title": "{{source_title}}",
+      "file_or_url": "{{source_path_or_url}}",
+      "date": "{{source_date}}",
+      "version": "{{source_version}}",
+      "notes": "{{source_notes}}"
+    }
+  ],
+  "evidence_refs": [
+    {
+      "id": "E-001",
+      "source_id": "S-001",
+      "label": "{{evidence_label}}",
+      "locator": "{{locator}}",
+      "anchor": "{{anchor}}",
+      "quote_snapshot": "{{quote_snapshot}}",
+      "context_summary": "{{context_summary}}",
+      "integrity": "needs_anchor"
+    }
+  ],
+  "observations": [
+    {
+      "id": "O-001",
+      "content": "{{observation_content}}",
+      "evidence_ref_ids": [
+        "E-001"
+      ],
+      "recorded_at": "{{recorded_at}}",
+      "notes": "{{observation_notes}}"
+    }
+  ],
+  "findings": {
+    "inferences": [
+      {
+        "id": "F-I-001",
+        "type": "inference",
+        "content": "{{inference_content}}",
+        "based_on_observation_ids": [
+          "O-001"
+        ],
+        "status": "pending",
+        "verification_method": "{{inference_verification_method}}",
+        "status_change_log": []
+      }
+    ],
+    "judgments": [
+      {
+        "id": "F-J-001",
+        "type": "judgment",
+        "evaluation_object": "{{evaluation_object}}",
+        "criterion": "{{criterion}}",
+        "result": "{{judgment_result}}",
+        "supported_by_ids": [
+          "F-I-001"
+        ],
+        "status": "pending",
+        "status_change_log": []
+      }
+    ],
+    "questions": [
+      {
+        "id": "F-Q-001",
+        "type": "question",
+        "question": "{{question}}",
+        "triggered_by_ids": [
+          "F-J-001"
+        ],
+        "verification_method": "{{question_verification_method}}",
+        "blocking": true,
+        "blocking_targets": [
+          "decision"
+        ],
+        "status": "open"
+      }
+    ]
+  },
+  "directions": [
+    {
+      "id": "DIR-001",
+      "direction": "{{direction}}",
+      "goal": "{{direction_goal}}",
+      "basis_ids": [
+        "F-J-001",
+        "F-Q-001"
+      ],
+      "boundary": "{{direction_boundary}}",
+      "status": "awaiting_decision"
+    }
+  ],
+  "decisions": [
+    {
+      "id": "DEC-001",
+      "action": "select",
+      "target_direction_ids": [
+        "DIR-001"
+      ],
+      "status": "proposed",
+      "basis_ids": [
+        "F-J-001",
+        "F-Q-001"
+      ],
+      "scope": "{{decision_scope}}",
+      "open_question_ids": [
+        "F-Q-001"
+      ],
+      "open_question_blocking": true,
+      "reevaluation_conditions": [
+        "{{reevaluation_condition}}"
+      ],
+      "decision_date": null,
+      "decision_maker": null
+    }
+  ],
+  "review_gate": {
+    "_comment": "决策审查节点。用于告诉下游 HTML Review skill 当前哪些内容可以审查、哪些内容不能拍板。",
+    "review_required": true,
+    "review_status": "needs_human_review",
+    "summary": "{{review_summary}}",
+    "decision_readiness": "not_ready",
+    "ready_direction_ids": [],
+    "blocked_direction_ids": [
+      "DIR-001"
+    ],
+    "blocking_question_ids": [
+      "F-Q-001"
+    ],
+    "evidence_issues": [
+      {
+        "type": "needs_anchor",
+        "target_id": "E-001",
+        "message": "{{evidence_issue_message}}"
+      }
+    ],
+    "recommended_review_questions": [
+      "{{recommended_review_question}}"
+    ],
+    "recommended_decision_wording": {
+      "status": "proposed",
+      "content": "{{recommended_decision_wording}}"
+    }
+  },
+  "traceability": {
+    "decision_to_evidence": [
+      {
+        "decision_id": "DEC-001",
+        "direction_ids": [
+          "DIR-001"
+        ],
+        "finding_ids": [
+          "F-J-001",
+          "F-Q-001"
+        ],
+        "observation_ids": [
+          "O-001"
+        ],
+        "evidence_ref_ids": [
+          "E-001"
+        ],
+        "source_ids": [
+          "S-001"
+        ]
+      }
+    ],
+    "direction_to_evidence": [
+      {
+        "direction_id": "DIR-001",
+        "finding_ids": [
+          "F-J-001",
+          "F-Q-001"
+        ],
+        "observation_ids": [
+          "O-001"
+        ],
+        "evidence_ref_ids": [
+          "E-001"
+        ],
+        "source_ids": [
+          "S-001"
+        ]
+      }
+    ]
+  },
+  "html_review_hints": {
+    "page_title": "{{page_title}}",
+    "primary_view": "review_gate",
+    "sections": [
+      "overview",
+      "review_gate",
+      "directions",
+      "decisions",
+      "blocking_questions",
+      "evidence_chain",
+      "source_index"
+    ],
+    "highlight_ids": {
+      "critical_questions": [
+        "F-Q-001"
+      ],
+      "high_risk_judgments": [
+        "F-J-001"
+      ],
+      "decision_candidates": [
+        "DEC-001"
+      ]
+    },
+    "interaction_hints": {
+      "enable_evidence_hover": true,
+      "enable_trace_expand": true,
+      "enable_status_filter": true,
+      "enable_blocking_filter": true
+    }
+  },
+  "change_log": [
+    {
+      "date": "{{change_date}}",
+      "change": "{{change}}",
+      "trigger_evidence_ids": [
+        "E-001"
+      ],
+      "reason": "{{change_reason}}"
+    }
+  ]
+}

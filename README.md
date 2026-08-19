@@ -15,6 +15,7 @@ Oliver 的个人技能插件合集。
 - [pre-coding](pre-coding/) - 编码前准备工作
 - [product](product/) - 产品工作流工具集
 - [skill-tools](skill-tools/) - Skill 创建、优化、提取工具集
+- [test](test/) - OFDD 测试 Skills 工具集
 - [writing](writing/) - 写作与内容创作工具集
 
 ## 安装

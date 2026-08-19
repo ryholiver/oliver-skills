@@ -1,0 +1,5 @@
+interface:
+  display_name: "OFDD HTML Review"
+  short_description: "将 OFDD 数据生成可追溯的交互式 HTML Review"
+  brand_color: "#173A46"
+  default_prompt: "Use $ofdd-html-review to turn this OFDD project data into a focused, traceable HTML Review page."

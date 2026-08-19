@@ -1,0 +1,1859 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <link rel="icon" href="data:,">
+  <title>OFDD Review · 应用层模板</title>
+  <style>
+    /* =========================================================
+       视觉方向：决策档案 / 编辑部审阅稿
+       目标：突出问题、判断、方向和决定，同时让证据链按需展开。
+       ========================================================= */
+    :root {
+      --paper: #f4f0e7;
+      --paper-deep: #e9e2d5;
+      --ink: #17201f;
+      --ink-soft: #59615d;
+      --line: rgba(23, 32, 31, 0.17);
+      --line-strong: rgba(23, 32, 31, 0.42);
+      --card: rgba(255, 253, 248, 0.78);
+      --navy: #173a46;
+      --navy-soft: #dce8e8;
+      --red: #c3412f;
+      --red-soft: #f4d9d2;
+      --amber: #a96d16;
+      --amber-soft: #f3e5c8;
+      --green: #38664f;
+      --green-soft: #dbe8df;
+      --shadow: 0 24px 70px rgba(35, 43, 40, 0.10);
+      --radius: 22px;
+      --serif: "Songti SC", "STSong", "Noto Serif SC", Georgia, serif;
+      --sans: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 92px;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 85% 2%, rgba(195, 65, 47, 0.10), transparent 24rem),
+        linear-gradient(rgba(23, 32, 31, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(23, 32, 31, 0.035) 1px, transparent 1px),
+        var(--paper);
+      background-size: auto, 32px 32px, 32px 32px, auto;
+      font-family: var(--sans);
+      line-height: 1.72;
+    }
+
+    button,
+    a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    button:focus-visible,
+    a:focus-visible,
+    summary:focus-visible {
+      outline: 3px solid rgba(195, 65, 47, 0.35);
+      outline-offset: 4px;
+    }
+
+    /* 顶部操作栏保持轻量，只承载审计、折叠和打印。 */
+    .topbar {
+      position: sticky;
+      z-index: 50;
+      top: 0;
+      display: flex;
+      min-height: 64px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 10px clamp(18px, 4vw, 58px);
+      border-bottom: 1px solid var(--line);
+      background: rgba(244, 240, 231, 0.88);
+      backdrop-filter: blur(18px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border: 1px solid var(--line-strong);
+      border-radius: 50%;
+      color: var(--paper);
+      background: var(--ink);
+      font-family: var(--serif);
+      font-size: 13px;
+      letter-spacing: 0;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .tool-button {
+      min-height: 38px;
+      padding: 0 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--ink);
+      background: rgba(255, 253, 248, 0.72);
+      font: 600 12px/1 var(--sans);
+      cursor: pointer;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+
+    .tool-button:hover {
+      transform: translateY(-1px);
+      border-color: var(--line-strong);
+      background: #fffdf8;
+    }
+
+    .tool-button[aria-pressed="true"] {
+      color: #fff;
+      border-color: var(--navy);
+      background: var(--navy);
+    }
+
+    /* 页面采用窄侧栏加宽内容区，像一份可导航的决策卷宗。 */
+    .page-shell {
+      display: grid;
+      grid-template-columns: minmax(150px, 210px) minmax(0, 1040px);
+      justify-content: center;
+      gap: clamp(28px, 5vw, 72px);
+      width: min(1500px, 100%);
+      margin: 0 auto;
+      padding: 42px clamp(18px, 4vw, 58px) 90px;
+    }
+
+    .section-nav {
+      position: sticky;
+      top: 105px;
+      align-self: start;
+      padding-top: 12px;
+    }
+
+    .section-nav::before {
+      display: block;
+      width: 42px;
+      height: 5px;
+      margin-bottom: 24px;
+      background: var(--red);
+      content: "";
+    }
+
+    .section-nav-title {
+      margin: 0 0 14px;
+      color: var(--ink-soft);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+
+    .section-nav a {
+      display: block;
+      margin-left: -10px;
+      padding: 8px 10px;
+      border-left: 2px solid transparent;
+      color: var(--ink-soft);
+      font-size: 12px;
+      text-decoration: none;
+      transition: color 160ms ease, border-color 160ms ease, transform 160ms ease;
+    }
+
+    .section-nav a:hover,
+    .section-nav a.is-active {
+      color: var(--ink);
+      border-color: var(--red);
+      transform: translateX(4px);
+    }
+
+    main {
+      min-width: 0;
+    }
+
+    /* 首屏将“要决定什么”作为最强信息，而非先陈列资料。 */
+    .hero {
+      position: relative;
+      overflow: hidden;
+      min-height: 500px;
+      padding: clamp(28px, 6vw, 68px);
+      border: 1px solid var(--line-strong);
+      border-radius: 2px 2px var(--radius) var(--radius);
+      color: #f8f5ed;
+      background: var(--navy);
+      box-shadow: var(--shadow);
+      animation: reveal-up 650ms both;
+    }
+
+    .hero::after {
+      position: absolute;
+      right: -95px;
+      bottom: -175px;
+      width: 430px;
+      height: 430px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 50%;
+      box-shadow:
+        0 0 0 45px rgba(255, 255, 255, 0.035),
+        0 0 0 90px rgba(255, 255, 255, 0.025);
+      content: "";
+    }
+
+    .hero-kicker {
+      display: flex;
+      position: relative;
+      z-index: 1;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 54px;
+      color: rgba(248, 245, 237, 0.68);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .hero-kicker::before {
+      width: 42px;
+      height: 2px;
+      background: var(--red);
+      content: "";
+    }
+
+    .hero h1 {
+      position: relative;
+      z-index: 1;
+      max-width: 850px;
+      margin: 0;
+      font-family: var(--serif);
+      font-size: clamp(42px, 7.4vw, 88px);
+      font-weight: 600;
+      letter-spacing: -0.055em;
+      line-height: 1.04;
+    }
+
+    .hero-question {
+      position: relative;
+      z-index: 1;
+      max-width: 760px;
+      margin: 30px 0 0;
+      color: rgba(248, 245, 237, 0.84);
+      font-family: var(--serif);
+      font-size: clamp(19px, 2.2vw, 27px);
+      line-height: 1.55;
+    }
+
+    .hero-meta {
+      display: flex;
+      position: relative;
+      z-index: 1;
+      flex-wrap: wrap;
+      gap: 12px 24px;
+      margin-top: 55px;
+      color: rgba(248, 245, 237, 0.68);
+      font-size: 12px;
+    }
+
+    .hero-meta strong {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .review-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .review-status::before {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #e5b862;
+      box-shadow: 0 0 0 5px rgba(229, 184, 98, 0.14);
+      content: "";
+    }
+
+    /* 摘要区域故意打破等宽栅格，让“建议”比普通元信息更突出。 */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 0.65fr;
+      gap: 18px;
+      margin-top: 20px;
+    }
+
+    .summary-card {
+      min-height: 180px;
+      padding: 28px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: 0 14px 40px rgba(35, 43, 40, 0.06);
+      animation: reveal-up 650ms 90ms both;
+    }
+
+    .summary-card.is-accent {
+      color: #fffaf3;
+      border-color: var(--red);
+      background: var(--red);
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 14px;
+      color: var(--ink-soft);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .is-accent .eyebrow {
+      color: rgba(255, 250, 243, 0.72);
+    }
+
+    .eyebrow::before {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+      content: "";
+    }
+
+    .summary-main {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: clamp(22px, 3vw, 34px);
+      line-height: 1.38;
+    }
+
+    .summary-note {
+      margin: 18px 0 0;
+      color: var(--ink-soft);
+      font-size: 13px;
+    }
+
+    .is-accent .summary-note {
+      color: rgba(255, 250, 243, 0.76);
+    }
+
+    .metric-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      overflow: hidden;
+      margin: 18px 0 0;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--line);
+      animation: reveal-up 650ms 150ms both;
+    }
+
+    .metric {
+      padding: 18px 20px;
+      background: rgba(255, 253, 248, 0.88);
+    }
+
+    .metric-value {
+      display: block;
+      margin-bottom: 2px;
+      font-family: var(--serif);
+      font-size: 26px;
+    }
+
+    .metric-label {
+      color: var(--ink-soft);
+      font-size: 11px;
+    }
+
+    .review-section {
+      margin-top: 78px;
+      scroll-margin-top: 90px;
+      animation: reveal-up 650ms both;
+    }
+
+    .section-heading {
+      display: grid;
+      grid-template-columns: 76px minmax(0, 1fr);
+      gap: 20px;
+      align-items: start;
+      margin-bottom: 28px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--line-strong);
+    }
+
+    .section-number {
+      color: var(--red);
+      font-family: var(--serif);
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: clamp(29px, 4vw, 48px);
+      font-weight: 600;
+      letter-spacing: -0.035em;
+      line-height: 1.08;
+    }
+
+    .section-heading p {
+      max-width: 680px;
+      margin: 10px 0 0;
+      color: var(--ink-soft);
+      font-size: 13px;
+    }
+
+    /* 推理链使用纵向轨道，强调判断可以一路回溯到证据。 */
+    .reasoning-list {
+      display: grid;
+      gap: 18px;
+    }
+
+    .reasoning-card {
+      position: relative;
+      padding: 0 0 0 58px;
+    }
+
+    .reasoning-card::before {
+      position: absolute;
+      top: 42px;
+      bottom: -24px;
+      left: 19px;
+      width: 1px;
+      background: var(--line-strong);
+      content: "";
+    }
+
+    .reasoning-card:last-child::before {
+      display: none;
+    }
+
+    .reasoning-node {
+      display: grid;
+      position: absolute;
+      top: 18px;
+      left: 0;
+      width: 39px;
+      height: 39px;
+      place-items: center;
+      border: 1px solid var(--line-strong);
+      border-radius: 50%;
+      color: #fff;
+      background: var(--navy);
+      font-family: var(--serif);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .reasoning-panel {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+    }
+
+    .reasoning-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 24px 26px 20px;
+    }
+
+    .reasoning-top h3 {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: 25px;
+      line-height: 1.35;
+    }
+
+    .machine-id {
+      display: none;
+      color: var(--ink-soft);
+      font: 700 10px/1 var(--sans);
+      letter-spacing: 0.09em;
+    }
+
+    body.audit-mode .machine-id {
+      display: inline-flex;
+    }
+
+    .status-chip {
+      display: inline-flex;
+      flex: 0 0 auto;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .status-pending {
+      color: #7b4e0c;
+      background: var(--amber-soft);
+    }
+
+    .status-supported,
+    .status-selected,
+    .status-decided {
+      color: #254b39;
+      background: var(--green-soft);
+    }
+
+    .status-blocked {
+      color: #932d20;
+      background: var(--red-soft);
+    }
+
+    .status-neutral {
+      color: #274b58;
+      background: var(--navy-soft);
+    }
+
+    .reasoning-body {
+      display: grid;
+      gap: 1px;
+      border-top: 1px solid var(--line);
+      background: var(--line);
+    }
+
+    .reasoning-layer {
+      padding: 20px 26px;
+      background: rgba(255, 253, 248, 0.76);
+    }
+
+    .layer-label {
+      margin: 0 0 7px;
+      color: var(--red);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .reasoning-layer p {
+      margin: 0;
+    }
+
+    .criteria-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 12px;
+    }
+
+    .criteria-tag {
+      padding: 5px 9px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--ink-soft);
+      background: rgba(255, 255, 255, 0.48);
+      font-size: 10px;
+    }
+
+    .observation-list {
+      display: grid;
+      gap: 10px;
+      margin: 12px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .observation-item {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 14px;
+      align-items: center;
+      padding: 13px 14px;
+      border-left: 3px solid var(--navy);
+      background: rgba(220, 232, 232, 0.42);
+    }
+
+    .observation-text {
+      font-size: 13px;
+    }
+
+    .evidence-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--navy);
+      background: rgba(255, 255, 255, 0.62);
+      font-size: 10px;
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: border-color 160ms ease, transform 160ms ease;
+    }
+
+    .evidence-link::after {
+      font-size: 11px;
+      content: "↗";
+    }
+
+    .evidence-link:hover {
+      transform: translateY(-1px);
+      border-color: var(--navy);
+    }
+
+    /* 问题卡片以阻塞程度区分视觉强度。 */
+    .question-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .question-card {
+      display: flex;
+      min-height: 310px;
+      flex-direction: column;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+    }
+
+    .question-card.is-blocking {
+      border-top: 5px solid var(--red);
+    }
+
+    .question-card.is-later {
+      border-top: 5px solid var(--amber);
+    }
+
+    .question-index {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .question-card h3 {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: 24px;
+      line-height: 1.42;
+    }
+
+    .question-detail {
+      display: grid;
+      gap: 9px;
+      margin-top: auto;
+      padding-top: 24px;
+    }
+
+    .detail-row {
+      display: grid;
+      grid-template-columns: 76px minmax(0, 1fr);
+      gap: 10px;
+      padding-top: 9px;
+      border-top: 1px solid var(--line);
+      font-size: 12px;
+    }
+
+    .detail-row dt {
+      color: var(--ink-soft);
+    }
+
+    .detail-row dd {
+      margin: 0;
+    }
+
+    /* 方向卡片支持真正比较，而不是只展示推荐答案。 */
+    .direction-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .direction-card {
+      display: flex;
+      position: relative;
+      overflow: hidden;
+      min-height: 440px;
+      flex-direction: column;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 253, 248, 0.78);
+      transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .direction-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 22px 50px rgba(35, 43, 40, 0.10);
+    }
+
+    .direction-card.is-recommended {
+      color: #f9f5eb;
+      border-color: var(--navy);
+      background: var(--navy);
+    }
+
+    .direction-card.is-recommended::after {
+      position: absolute;
+      top: -65px;
+      right: -65px;
+      width: 150px;
+      height: 150px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 50%;
+      content: "";
+    }
+
+    .direction-letter {
+      display: grid;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      margin-bottom: 30px;
+      border: 1px solid currentColor;
+      border-radius: 50%;
+      font-family: var(--serif);
+      font-size: 17px;
+    }
+
+    .direction-card h3 {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      font-family: var(--serif);
+      font-size: 26px;
+      line-height: 1.3;
+    }
+
+    .direction-goal {
+      margin: 12px 0 0;
+      color: var(--ink-soft);
+      font-size: 12px;
+    }
+
+    .is-recommended .direction-goal,
+    .is-recommended .direction-list,
+    .is-recommended .direction-detail summary {
+      color: rgba(249, 245, 235, 0.72);
+    }
+
+    .direction-list {
+      display: grid;
+      gap: 9px;
+      margin: 26px 0 0;
+      padding: 0;
+      color: var(--ink-soft);
+      font-size: 12px;
+      list-style: none;
+    }
+
+    .direction-list li {
+      position: relative;
+      padding-left: 16px;
+    }
+
+    .direction-list li::before {
+      position: absolute;
+      top: 0.72em;
+      left: 0;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--red);
+      content: "";
+    }
+
+    .direction-detail {
+      margin-top: auto;
+      padding-top: 24px;
+    }
+
+    .direction-detail summary {
+      cursor: pointer;
+      color: var(--ink-soft);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .direction-detail p {
+      margin: 12px 0 0;
+      font-size: 12px;
+    }
+
+    .recommendation {
+      display: grid;
+      grid-template-columns: minmax(0, 1.45fr) minmax(240px, 0.55fr);
+      gap: 1px;
+      overflow: hidden;
+      margin-top: 18px;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      background: var(--line-strong);
+    }
+
+    .recommendation-main,
+    .recommendation-conditions {
+      padding: 28px;
+      background: rgba(255, 253, 248, 0.88);
+    }
+
+    .recommendation-main h3 {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: 30px;
+    }
+
+    .recommendation-main p,
+    .recommendation-conditions p {
+      margin: 12px 0 0;
+      color: var(--ink-soft);
+      font-size: 13px;
+    }
+
+    .decision-panel {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(28px, 5vw, 54px);
+      border-radius: var(--radius);
+      color: #fffaf2;
+      background: var(--red);
+      box-shadow: var(--shadow);
+    }
+
+    .decision-panel::before {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 170px;
+      height: 100%;
+      border-left: 1px solid rgba(255, 255, 255, 0.2);
+      background: repeating-linear-gradient(
+        -45deg,
+        rgba(255, 255, 255, 0.03) 0,
+        rgba(255, 255, 255, 0.03) 8px,
+        transparent 8px,
+        transparent 16px
+      );
+      content: "";
+    }
+
+    .decision-panel h3 {
+      position: relative;
+      z-index: 1;
+      max-width: 760px;
+      margin: 12px 0 0;
+      font-family: var(--serif);
+      font-size: clamp(31px, 5vw, 56px);
+      line-height: 1.17;
+    }
+
+    .decision-panel .eyebrow {
+      color: rgba(255, 250, 242, 0.72);
+    }
+
+    .decision-meta {
+      display: grid;
+      position: relative;
+      z-index: 1;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 42px;
+    }
+
+    .decision-meta-item {
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.32);
+    }
+
+    .decision-meta-item span {
+      display: block;
+      margin-bottom: 5px;
+      color: rgba(255, 250, 242, 0.66);
+      font-size: 10px;
+    }
+
+    .decision-meta-item strong {
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .table-shell {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    th,
+    td {
+      padding: 15px 17px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--ink-soft);
+      background: rgba(233, 226, 213, 0.58);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .writeback-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .writeback-item {
+      min-height: 130px;
+      padding: 20px;
+      border: 1px dashed var(--line-strong);
+      border-radius: 16px;
+      background: rgba(255, 253, 248, 0.55);
+    }
+
+    .writeback-item.is-complete {
+      border-style: solid;
+      border-color: rgba(56, 102, 79, 0.42);
+      background: var(--green-soft);
+    }
+
+    .writeback-item h3 {
+      margin: 0 0 8px;
+      font-family: var(--serif);
+      font-size: 18px;
+    }
+
+    .writeback-item p {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 11px;
+    }
+
+    .review-footer {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-top: 80px;
+      padding-top: 24px;
+      border-top: 1px solid var(--line-strong);
+      color: var(--ink-soft);
+      font-size: 11px;
+    }
+
+    .review-footer strong {
+      display: block;
+      color: var(--ink);
+      font-family: var(--serif);
+      font-size: 18px;
+    }
+
+    /* 证据悬浮卡片由脚本定位，避免被父容器裁切。 */
+    .evidence-tooltip {
+      position: fixed;
+      z-index: 100;
+      width: min(350px, calc(100vw - 28px));
+      padding: 16px;
+      border: 1px solid var(--line-strong);
+      border-radius: 14px;
+      color: var(--ink);
+      background: #fffdf8;
+      box-shadow: 0 22px 65px rgba(23, 32, 31, 0.2);
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 130ms ease, transform 130ms ease;
+    }
+
+    .evidence-tooltip.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .tooltip-label {
+      color: var(--red);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+    }
+
+    .tooltip-quote {
+      margin: 8px 0 0;
+      font-family: var(--serif);
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .tooltip-meta {
+      margin: 10px 0 0;
+      color: var(--ink-soft);
+      font-size: 10px;
+    }
+
+    @keyframes reveal-up {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    @media (max-width: 980px) {
+      .page-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .section-nav {
+        display: none;
+      }
+
+      .direction-grid,
+      .writeback-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .direction-card {
+        min-height: auto;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .topbar {
+        align-items: flex-start;
+      }
+
+      .brand span:last-child {
+        display: none;
+      }
+
+      .toolbar {
+        gap: 5px;
+      }
+
+      .tool-button {
+        padding: 0 10px;
+      }
+
+      .page-shell {
+        padding-top: 20px;
+      }
+
+      .hero {
+        min-height: 470px;
+        border-radius: 0 0 22px 22px;
+      }
+
+      .hero-kicker {
+        margin-bottom: 38px;
+      }
+
+      .summary-grid,
+      .question-grid,
+      .recommendation,
+      .decision-meta {
+        grid-template-columns: 1fr;
+      }
+
+      .metric-strip {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .section-heading {
+        grid-template-columns: 45px minmax(0, 1fr);
+      }
+
+      .reasoning-card {
+        padding-left: 0;
+      }
+
+      .reasoning-node,
+      .reasoning-card::before {
+        display: none;
+      }
+
+      .reasoning-top,
+      .observation-item {
+        grid-template-columns: 1fr;
+      }
+
+      .reasoning-top {
+        display: grid;
+      }
+
+      .observation-item {
+        align-items: start;
+      }
+    }
+
+    @media print {
+      @page {
+        margin: 14mm;
+        size: A4;
+      }
+
+      body {
+        color: #111;
+        background: #fff;
+      }
+
+      .topbar,
+      .section-nav,
+      .evidence-tooltip {
+        display: none !important;
+      }
+
+      .page-shell {
+        display: block;
+        width: 100%;
+        padding: 0;
+      }
+
+      .hero,
+      .decision-panel,
+      .direction-card.is-recommended {
+        color: #111;
+        border: 2px solid #111;
+        background: #fff;
+        box-shadow: none;
+      }
+
+      .hero::after,
+      .decision-panel::before {
+        display: none;
+      }
+
+      .hero-meta,
+      .hero-question,
+      .direction-card.is-recommended .direction-goal,
+      .direction-card.is-recommended .direction-list {
+        color: #333;
+      }
+
+      .review-section,
+      .reasoning-card,
+      .question-card,
+      .direction-card,
+      .decision-panel {
+        break-inside: avoid;
+      }
+
+      .machine-id {
+        display: inline-flex;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 顶部工具栏：不承载业务信息，只提供阅读和审计操作。 -->
+  <header class="topbar">
+    <div class="brand" aria-label="OFDD Review">
+      <span class="brand-mark">OD</span>
+      <span>OFDD / Review Application Layer</span>
+    </div>
+    <div class="toolbar" aria-label="页面工具">
+      <button class="tool-button" id="audit-toggle" type="button" aria-pressed="false">显示 ID</button>
+      <button class="tool-button" id="expand-toggle" type="button" aria-pressed="false">展开方向</button>
+      <button class="tool-button" id="print-button" type="button">打印 / PDF</button>
+    </div>
+  </header>
+
+  <div class="page-shell">
+    <!-- 左侧导航由脚本依据固定章节生成高亮。 -->
+    <aside class="section-nav" aria-label="Review 章节导航">
+      <p class="section-nav-title">Review Index</p>
+      <nav id="section-navigation"></nav>
+    </aside>
+
+    <!-- 主内容全部由 REVIEW_DATA 渲染，避免在 HTML 结构中重复维护业务事实。 -->
+    <main id="review-app" aria-live="polite"></main>
+  </div>
+
+  <!-- 悬浮证据预览只显示短原文快照，完整上下文仍通过链接打开。 -->
+  <aside class="evidence-tooltip" id="evidence-tooltip" role="tooltip" aria-hidden="true">
+    <div class="tooltip-label" id="tooltip-label"></div>
+    <blockquote class="tooltip-quote" id="tooltip-quote"></blockquote>
+    <div class="tooltip-meta" id="tooltip-meta"></div>
+  </aside>
+
+  <script>
+    /* =========================================================
+       Review 数据区
+       使用方法：AI 生成新 Review 时，优先替换此对象中的内容，
+       不改动下方渲染逻辑。ID 只用于追溯，普通视图默认隐藏。
+       ========================================================= */
+    /* REVIEW_DATA_START：生成脚本仅替换两个标记之间的数据对象。 */
+    const REVIEW_DATA = {
+      meta: {
+        id: "REV-20260819-01",
+        title: "销售 AI 约课项目",
+        subtitle: "范围、验收与技术路线 Review",
+        type: "决策型 Review",
+        date: "2026-08-19",
+        status: "待负责人确认",
+        owner: "项目负责人待补",
+        sourceOfTruth: "豌豆AI提效项目-OFDD实例.md",
+        timeBasis: "截至 2026-08-19"
+      },
+      objective: {
+        question: "2026 年 8 月 31 日前，项目应只推进企微文本闭环、转向电话语音，还是采用双线并行？",
+        goal: "确定短期推进方向与验收边界，并明确哪些未知项阻塞最终范围。",
+        scope: "销售 AI 约课的渠道、最小生产闭环、语音能力储备",
+        excluded: "本次不展开完整实施计划与 Todo 拆解",
+        criteria: ["短期生产闭环", "合同范围", "真实业务价值", "技术与时间风险"]
+      },
+      summary: {
+        current: "企微文本适合承担短期生产闭环，但可能不足以代表真实主要约课渠道。",
+        recommendation: "建议维持“业务推进与语音能力储备双线并行”，同时补齐产品范围和验收口径。",
+        uncertainty: "电话是否为主要有效约课渠道，以及 8 月 31 日验收边界尚未正式确认。"
+      },
+      reasoningChains: [
+        {
+          id: "CHAIN-01",
+          title: "企微方案与真实约课渠道可能存在范围错配",
+          status: "待验证",
+          statusTone: "pending",
+          judgment: {
+            id: "F-J-01",
+            text: "如果主要约课渠道确为电话，相对于“覆盖真实约课主流程”的标准，当前企微优先方案存在场景范围错配风险。",
+            criteria: ["是否覆盖真实约课主流程"],
+            condition: "电话确为主要约课渠道"
+          },
+          inference: {
+            id: "F-I-01",
+            text: "当前企微方案覆盖的交互渠道可能与销售主要约课渠道不完全一致。"
+          },
+          observations: [
+            {
+              id: "O-09",
+              text: "张敏表示约课渠道包括微信，但更偏向电话，并主张优先打电话。",
+              evidence: {
+                id: "E-009",
+                label: "张敏访谈：真实约课渠道",
+                quote: "也有微信，比较偏电话快一些。我们主张的是先打电话。",
+                locator: "S-04 · L58/L70",
+                integrity: "待加锚点",
+                href: "../01-事实性资料/2026-08-18_销售张敏访谈_AI约课流程与关键指标讨论_原文.md#src-zm-primary-channel"
+              }
+            },
+            {
+              id: "O-15",
+              text: "项目合同要求首批销售通过企微承接真实线索并产生可追踪链路。",
+              evidence: {
+                id: "E-015",
+                label: "约课机器人项目：企微真实链路",
+                quote: "首批 7 名销售通过企微承接真实线索并产生可追踪链路。",
+                locator: "S-05 · L16-L20",
+                integrity: "待加锚点",
+                href: "../01-事实性资料/2026-08-18_销售AI约课机器人项目.md#src-project-wecom-chain"
+              }
+            }
+          ]
+        },
+        {
+          id: "CHAIN-02",
+          title: "“约课成功”尚不足以成为无歧义验收标准",
+          status: "待验证",
+          statusTone: "pending",
+          judgment: {
+            id: "F-J-02",
+            text: "相对于“一致且可执行的项目验收标准”，在口径未统一前，当前“约课成功”指标存在歧义。",
+            criteria: ["口径一致", "可被系统记录", "可用于验收"],
+            condition: "排班、到课和付费仍被不同参与者混用"
+          },
+          inference: {
+            id: "F-I-02",
+            text: "当前材料中“约课成功”可能对应约完并排班、到课或付费成交等不同统计口径。"
+          },
+          observations: [
+            {
+              id: "O-10",
+              text: "张敏将“约完课并放入班级”描述为约课成功，并说明付费后不归当前销售环节负责。",
+              evidence: {
+                id: "E-010A",
+                label: "张敏访谈：约课成功口径",
+                quote: "给他约完课放进去班，他就算是约课成功了。",
+                locator: "S-04 · L106-L118",
+                integrity: "待加锚点",
+                href: "../01-事实性资料/2026-08-18_销售张敏访谈_AI约课流程与关键指标讨论_原文.md#src-zm-booking-success"
+              }
+            },
+            {
+              id: "O-12",
+              text: "项目要求在 2026 年 8 月 31 日前三个目标场景形成真实生产闭环。",
+              evidence: {
+                id: "E-012B",
+                label: "约课机器人项目：8 月 31 日目标",
+                quote: "2026-08-31 前，三个目标对应场景形成真实生产闭环。",
+                locator: "S-05 · L5-L12",
+                integrity: "待加锚点",
+                href: "../01-事实性资料/2026-08-18_销售AI约课机器人项目.md#src-project-0831-loop"
+              }
+            }
+          ]
+        }
+      ],
+      questions: [
+        {
+          id: "F-Q-01",
+          text: "AI 约课实际接管销售流程的哪一段、哪些渠道？",
+          purpose: "确定最终产品范围",
+          impact: "最终方案范围决定",
+          blocking: "不阻塞调研和能力储备；阻塞最终范围",
+          evidenceNeeded: "合同范围、负责人确认、真实渠道业务量",
+          owner: "项目负责人 / 销售负责人",
+          tone: "blocking"
+        },
+        {
+          id: "F-Q-02",
+          text: "Q3 验收范围是最小闭环、上课提醒，还是电销能力？",
+          purpose: "形成无歧义验收标准",
+          impact: "验收范围决定",
+          blocking: "阻塞最终验收口径",
+          evidenceNeeded: "正式验收定义、系统字段、负责人确认",
+          owner: "项目负责人",
+          tone: "blocking"
+        },
+        {
+          id: "F-Q-03",
+          text: "哪个环节最耗时、最有提效价值？",
+          purpose: "形成后续提效优先级",
+          impact: "提效方向优先级",
+          blocking: "不阻塞当前调研；阻塞优先级决定",
+          evidenceNeeded: "流程耗时、业务量、成功率与人员反馈",
+          owner: "产品 / 销售运营",
+          tone: "later"
+        },
+        {
+          id: "F-Q-04",
+          text: "文本形态的复杂度具体在哪些维度更低？",
+          purpose: "比较文本与语音技术路线",
+          impact: "后续技术方案取舍",
+          blocking: "不阻塞储备；可能阻塞技术方案",
+          evidenceNeeded: "流程分支、接口、异常处理、工时和测试成本",
+          owner: "技术负责人",
+          tone: "later"
+        }
+      ],
+      directions: [
+        {
+          id: "DIR-A",
+          letter: "A",
+          title: "企微文本优先",
+          goal: "集中完成短期生产闭环",
+          benefits: ["交付范围集中", "符合当前企微链路要求", "短期技术风险相对较低"],
+          risk: "可能无法覆盖真实主要约课渠道，业务价值验证不足。",
+          boundary: "当前阶段不投入完整语音能力。",
+          selected: false
+        },
+        {
+          id: "DIR-B",
+          letter: "B",
+          title: "电话语音优先",
+          goal: "优先验证可能的主要业务渠道",
+          benefits: ["更贴近电话约课场景", "有机会验证真实销售提效价值", "提前暴露语音链路难点"],
+          risk: "技术复杂度和短期交付不确定性较高。",
+          boundary: "需要重新评估 8 月 31 日交付范围。",
+          selected: false
+        },
+        {
+          id: "DIR-04",
+          letter: "C",
+          title: "双线并行",
+          goal: "企微形成闭环，语音同步储备",
+          benefits: ["兼顾短期交付和长期价值", "保留对主要渠道的能力准备", "允许问题按阻塞性分流"],
+          risk: "资源可能分散，必须明确两条线的投入边界。",
+          boundary: "不等于当前阶段直接上线完整语音约课。",
+          selected: true
+        }
+      ],
+      recommendation: {
+        directionId: "DIR-04",
+        title: "建议选择双线并行",
+        rationale: "企微文本负责验证短期真实生产闭环；语音方向先进行场景、流程和技术可行性储备。",
+        condition: "需要尽快确认 F-Q-01 和 F-Q-02，避免双线并行演变为无边界的资源分散。"
+      },
+      decision: {
+        id: "DEC-01",
+        title: "选择“业务推进与语音能力储备双线并行”",
+        status: "已拍板（信息待补）",
+        selected: "DIR-04",
+        rejected: "电话语音优先",
+        deferred: "只做企微文本作为唯一长期方向",
+        decisionMaker: "待补",
+        decidedAt: "待补",
+        scope: "Review 前的业务推进与语音能力准备",
+        rationale: "兼顾 8 月 31 日生产闭环与真实主要渠道可能为电话的风险。",
+        reconsiderWhen: "负责人形成明确范围和验收记录，或新的渠道数据推翻 F-I-01。"
+      },
+      unresolved: [
+        {
+          id: "F-Q-01",
+          issue: "接管流程段与渠道",
+          blocking: "阻塞最终方案范围",
+          owner: "项目负责人 / 销售负责人",
+          due: "待确认"
+        },
+        {
+          id: "F-Q-02",
+          issue: "8 月 31 日验收边界",
+          blocking: "阻塞最终验收口径",
+          owner: "项目负责人",
+          due: "待确认"
+        },
+        {
+          id: "DEC-01-META",
+          issue: "决策人、精确时间和完整依据",
+          blocking: "不阻塞调研；影响决定审计完整性",
+          owner: "Review 记录人",
+          due: "Review 会后"
+        }
+      ],
+      writeback: [
+        { title: "新增 Source", detail: "Review 录音、纪要或负责人确认记录", complete: false },
+        { title: "新增 Evidence Reference", detail: "定位现场关键回答和正式拍板原文", complete: false },
+        { title: "新增 Observation", detail: "记录范围、验收和方向确认结果", complete: false },
+        { title: "更新 Finding", detail: "更新 F-I-01、F-J-01、F-J-02 与问题状态", complete: false },
+        { title: "更新 Direction", detail: "确认 DIR-04 的边界、依赖和状态", complete: false },
+        { title: "更新 Decision", detail: "补齐 DEC-01 决策人、时间、依据和重评条件", complete: false }
+      ]
+    };
+    /* REVIEW_DATA_END */
+
+    /* 状态样式映射保持集中，便于未来扩展 OFDD 状态。 */
+    const STATUS_CLASS = {
+      pending: "status-pending",
+      supported: "status-supported",
+      selected: "status-selected",
+      decided: "status-decided",
+      blocked: "status-blocked",
+      neutral: "status-neutral"
+    };
+
+    /* 对动态内容进行最小转义，避免来源文本破坏 HTML 结构。 */
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    /* 将数组渲染为标签，主要用于评价标准。 */
+    function renderTags(items) {
+      return items.map((item) => `<span class="criteria-tag">${escapeHtml(item)}</span>`).join("");
+    }
+
+    /* 证据链接保留机器 ID、短原文、定位和完整性，供悬浮与审计模式使用。 */
+    function renderEvidence(observation) {
+      const evidence = observation.evidence;
+      return `
+        <li class="observation-item">
+          <div class="observation-text">
+            <span class="machine-id">${escapeHtml(observation.id)}</span>
+            ${escapeHtml(observation.text)}
+          </div>
+          <a
+            class="evidence-link"
+            href="${escapeHtml(evidence.href)}"
+            data-evidence-label="${escapeHtml(evidence.label)}"
+            data-evidence-quote="${escapeHtml(evidence.quote)}"
+            data-evidence-meta="${escapeHtml(`${evidence.id} · ${evidence.locator} · ${evidence.integrity}`)}"
+          >
+            <span class="machine-id">${escapeHtml(evidence.id)}</span>
+            ${escapeHtml(evidence.label)}
+          </a>
+        </li>
+      `;
+    }
+
+    /* 单条认知链按“判断 → 推断 → 观察 → 证据”展开。 */
+    function renderReasoningChain(chain, index) {
+      return `
+        <article class="reasoning-card" data-ofdd-chain="${escapeHtml(chain.id)}">
+          <span class="reasoning-node">${String(index + 1).padStart(2, "0")}</span>
+          <div class="reasoning-panel">
+            <div class="reasoning-top">
+              <div>
+                <span class="machine-id">${escapeHtml(chain.id)}</span>
+                <h3>${escapeHtml(chain.title)}</h3>
+              </div>
+              <span class="status-chip ${STATUS_CLASS[chain.statusTone] || STATUS_CLASS.neutral}">${escapeHtml(chain.status)}</span>
+            </div>
+            <div class="reasoning-body">
+              <section class="reasoning-layer">
+                <p class="layer-label">Judgment · 判断 <span class="machine-id">${escapeHtml(chain.judgment.id)}</span></p>
+                <p>${escapeHtml(chain.judgment.text)}</p>
+                <div class="criteria-list">${renderTags(chain.judgment.criteria)}</div>
+              </section>
+              <section class="reasoning-layer">
+                <p class="layer-label">Inference · 推断 <span class="machine-id">${escapeHtml(chain.inference.id)}</span></p>
+                <p>${escapeHtml(chain.inference.text)}</p>
+              </section>
+              <section class="reasoning-layer">
+                <p class="layer-label">Observation & Evidence · 观察与证据</p>
+                <ul class="observation-list">${chain.observations.map(renderEvidence).join("")}</ul>
+              </section>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    /* 问题卡片将认知缺口和阻塞对象放在同一视图中。 */
+    function renderQuestion(question) {
+      const cardClass = question.tone === "blocking" ? "is-blocking" : "is-later";
+      const chipClass = question.tone === "blocking" ? STATUS_CLASS.blocked : STATUS_CLASS.pending;
+      const chipText = question.tone === "blocking" ? "阻塞项" : "后续验证";
+      return `
+        <article class="question-card ${cardClass}" data-ofdd-id="${escapeHtml(question.id)}">
+          <div class="question-index">
+            <span class="machine-id">${escapeHtml(question.id)}</span>
+            <span class="status-chip ${chipClass}">${chipText}</span>
+          </div>
+          <h3>${escapeHtml(question.text)}</h3>
+          <dl class="question-detail">
+            <div class="detail-row"><dt>提问目的</dt><dd>${escapeHtml(question.purpose)}</dd></div>
+            <div class="detail-row"><dt>影响对象</dt><dd>${escapeHtml(question.impact)}</dd></div>
+            <div class="detail-row"><dt>阻塞性</dt><dd>${escapeHtml(question.blocking)}</dd></div>
+            <div class="detail-row"><dt>需要证据</dt><dd>${escapeHtml(question.evidenceNeeded)}</dd></div>
+            <div class="detail-row"><dt>回答人</dt><dd>${escapeHtml(question.owner)}</dd></div>
+          </dl>
+        </article>
+      `;
+    }
+
+    /* 方向卡片同时展示优势、风险和边界，推荐项仅增强视觉，不隐藏其他选项。 */
+    function renderDirection(direction) {
+      return `
+        <article class="direction-card ${direction.selected ? "is-recommended" : ""}" data-ofdd-id="${escapeHtml(direction.id)}">
+          <span class="direction-letter">${escapeHtml(direction.letter)}</span>
+          <span class="machine-id">${escapeHtml(direction.id)}</span>
+          <h3>${escapeHtml(direction.title)}</h3>
+          <p class="direction-goal">${escapeHtml(direction.goal)}</p>
+          <ul class="direction-list">
+            ${direction.benefits.map((benefit) => `<li>${escapeHtml(benefit)}</li>`).join("")}
+          </ul>
+          <details class="direction-detail">
+            <summary>查看风险与边界</summary>
+            <p><strong>风险：</strong>${escapeHtml(direction.risk)}</p>
+            <p><strong>边界：</strong>${escapeHtml(direction.boundary)}</p>
+          </details>
+        </article>
+      `;
+    }
+
+    /* 统一章节标题，确保导航和正文使用同一组 ID。 */
+    function sectionHeading(number, title, description) {
+      return `
+        <header class="section-heading">
+          <span class="section-number">${escapeHtml(number)}</span>
+          <div>
+            <h2>${escapeHtml(title)}</h2>
+            <p>${escapeHtml(description)}</p>
+          </div>
+        </header>
+      `;
+    }
+
+    /* 生成完整 Review 页面。业务内容只来自 REVIEW_DATA。 */
+    function renderReview(data) {
+      const app = document.querySelector("#review-app");
+      const blockingCount = data.questions.filter((question) => question.tone === "blocking").length;
+      const evidenceCount = data.reasoningChains.reduce((total, chain) => total + chain.observations.length, 0);
+
+      app.innerHTML = `
+        <section class="hero" id="overview" data-nav-title="Review 概览">
+          <p class="hero-kicker">${escapeHtml(data.meta.type)} · ${escapeHtml(data.meta.date)}</p>
+          <h1>${escapeHtml(data.meta.title)}<br>${escapeHtml(data.meta.subtitle)}</h1>
+          <p class="hero-question">${escapeHtml(data.objective.question)}</p>
+          <div class="hero-meta">
+            <span class="review-status"><strong>${escapeHtml(data.meta.status)}</strong></span>
+            <span>Review ID：<strong>${escapeHtml(data.meta.id)}</strong></span>
+            <span>决策人：<strong>${escapeHtml(data.meta.owner)}</strong></span>
+            <span>时间基准：<strong>${escapeHtml(data.meta.timeBasis)}</strong></span>
+          </div>
+        </section>
+
+        <section aria-label="核心摘要">
+          <div class="summary-grid">
+            <article class="summary-card">
+              <p class="eyebrow">Current Judgment · 当前判断</p>
+              <p class="summary-main">${escapeHtml(data.summary.current)}</p>
+              <p class="summary-note">最大不确定性：${escapeHtml(data.summary.uncertainty)}</p>
+            </article>
+            <article class="summary-card is-accent">
+              <p class="eyebrow">Recommendation · 建议</p>
+              <p class="summary-main">${escapeHtml(data.summary.recommendation)}</p>
+              <p class="summary-note">建议不等于决定，最终以 Review 拍板和 OFDD 回写为准。</p>
+            </article>
+          </div>
+          <div class="metric-strip" aria-label="Review 摘要指标">
+            <div class="metric"><span class="metric-value">${data.reasoningChains.length}</span><span class="metric-label">关键判断链</span></div>
+            <div class="metric"><span class="metric-value">${evidenceCount}</span><span class="metric-label">关键观察</span></div>
+            <div class="metric"><span class="metric-value">${blockingCount}</span><span class="metric-label">阻塞问题</span></div>
+            <div class="metric"><span class="metric-value">${data.directions.length}</span><span class="metric-label">候选方向</span></div>
+          </div>
+        </section>
+
+        <section class="review-section" id="objective" data-nav-title="目标与边界">
+          ${sectionHeading("01", "目标与边界", "先确定这次 Review 要解决什么，再决定调用哪些 OFDD 内容。")}
+          <div class="recommendation">
+            <article class="recommendation-main">
+              <p class="eyebrow">Review Goal</p>
+              <h3>${escapeHtml(data.objective.goal)}</h3>
+              <p><strong>讨论范围：</strong>${escapeHtml(data.objective.scope)}</p>
+              <div class="criteria-list">${renderTags(data.objective.criteria)}</div>
+            </article>
+            <aside class="recommendation-conditions">
+              <p class="eyebrow">Out of Scope</p>
+              <p>${escapeHtml(data.objective.excluded)}</p>
+              <p><strong>事实源：</strong>${escapeHtml(data.meta.sourceOfTruth)}</p>
+            </aside>
+          </div>
+        </section>
+
+        <section class="review-section" id="reasoning" data-nav-title="判断与证据">
+          ${sectionHeading("02", "判断与证据", "默认展示判断，向下展开推断、观察和证据引用；悬停证据可查看短原文。")}
+          <div class="reasoning-list">${data.reasoningChains.map(renderReasoningChain).join("")}</div>
+        </section>
+
+        <section class="review-section" id="questions" data-nav-title="待回答问题">
+          ${sectionHeading("03", "待回答问题", "问题必须说明为什么问、影响什么，以及是否阻塞本次决定。")}
+          <div class="question-grid">${data.questions.map(renderQuestion).join("")}</div>
+        </section>
+
+        <section class="review-section" id="directions" data-nav-title="方向比较">
+          ${sectionHeading("04", "方向比较", "方向回答接下来往哪里走；它不是计划，也不是已经拍板的决定。")}
+          <div class="direction-grid">${data.directions.map(renderDirection).join("")}</div>
+          <div class="recommendation">
+            <article class="recommendation-main">
+              <p class="eyebrow">Recommended Direction <span class="machine-id">${escapeHtml(data.recommendation.directionId)}</span></p>
+              <h3>${escapeHtml(data.recommendation.title)}</h3>
+              <p>${escapeHtml(data.recommendation.rationale)}</p>
+            </article>
+            <aside class="recommendation-conditions">
+              <p class="eyebrow">成立条件</p>
+              <p>${escapeHtml(data.recommendation.condition)}</p>
+            </aside>
+          </div>
+        </section>
+
+        <section class="review-section" id="decision" data-nav-title="决定结果">
+          ${sectionHeading("05", "决定结果", "决定必须明确选择、拒绝或暂缓什么，并保留未决项与重评条件。")}
+          <article class="decision-panel" data-ofdd-id="${escapeHtml(data.decision.id)}">
+            <p class="eyebrow">Decision <span class="machine-id">${escapeHtml(data.decision.id)}</span></p>
+            <h3>${escapeHtml(data.decision.title)}</h3>
+            <div class="decision-meta">
+              <div class="decision-meta-item"><span>状态</span><strong>${escapeHtml(data.decision.status)}</strong></div>
+              <div class="decision-meta-item"><span>决策人 / 时间</span><strong>${escapeHtml(data.decision.decisionMaker)} / ${escapeHtml(data.decision.decidedAt)}</strong></div>
+              <div class="decision-meta-item"><span>适用范围</span><strong>${escapeHtml(data.decision.scope)}</strong></div>
+              <div class="decision-meta-item"><span>重评条件</span><strong>${escapeHtml(data.decision.reconsiderWhen)}</strong></div>
+            </div>
+          </article>
+        </section>
+
+        <section class="review-section" id="unresolved" data-nav-title="未决事项">
+          ${sectionHeading("06", "未决事项", "未回答不等于全部阻塞；需明确每个问题实际阻塞哪个对象。")}
+          <div class="table-shell">
+            <table>
+              <thead><tr><th>ID</th><th>未决事项</th><th>阻塞性</th><th>负责人</th><th>时间</th></tr></thead>
+              <tbody>
+                ${data.unresolved.map((item) => `
+                  <tr>
+                    <td>${escapeHtml(item.id)}</td>
+                    <td>${escapeHtml(item.issue)}</td>
+                    <td>${escapeHtml(item.blocking)}</td>
+                    <td>${escapeHtml(item.owner)}</td>
+                    <td>${escapeHtml(item.due)}</td>
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="review-section" id="writeback" data-nav-title="OFDD 回写">
+          ${sectionHeading("07", "OFDD 回写", "Review 不是事实终点。现场产生的新信息与决定必须回到 OFDD。")}
+          <div class="writeback-grid">
+            ${data.writeback.map((item) => `
+              <article class="writeback-item ${item.complete ? "is-complete" : ""}">
+                <h3>${item.complete ? "✓ " : "○ "}${escapeHtml(item.title)}</h3>
+                <p>${escapeHtml(item.detail)}</p>
+              </article>
+            `).join("")}
+          </div>
+        </section>
+
+        <footer class="review-footer">
+          <div><strong>OFDD → Review → OFDD</strong>本页面是特定目标下的应用层展示快照，不替代 OFDD 项目实例。</div>
+          <div>生成日期：${escapeHtml(data.meta.date)} · ${escapeHtml(data.meta.id)}</div>
+        </footer>
+      `;
+    }
+
+    /* 根据章节生成侧边导航，并在滚动时高亮当前章节。 */
+    function setupNavigation() {
+      const navigation = document.querySelector("#section-navigation");
+      const sections = [...document.querySelectorAll("[data-nav-title]")];
+
+      navigation.innerHTML = sections.map((section) => `
+        <a href="#${escapeHtml(section.id)}">${escapeHtml(section.dataset.navTitle)}</a>
+      `).join("");
+
+      const links = new Map(
+        [...navigation.querySelectorAll("a")].map((link) => [link.getAttribute("href").slice(1), link])
+      );
+
+      const observer = new IntersectionObserver((entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+        if (!visible) return;
+        links.forEach((link) => link.classList.remove("is-active"));
+        links.get(visible.target.id)?.classList.add("is-active");
+      }, { rootMargin: "-20% 0px -65% 0px", threshold: [0, 0.2, 0.6] });
+
+      sections.forEach((section) => observer.observe(section));
+    }
+
+    /* 悬停证据时显示原文快照；点击仍跳转完整来源上下文。 */
+    function setupEvidenceTooltips() {
+      const tooltip = document.querySelector("#evidence-tooltip");
+      const label = document.querySelector("#tooltip-label");
+      const quote = document.querySelector("#tooltip-quote");
+      const meta = document.querySelector("#tooltip-meta");
+      const evidenceLinks = document.querySelectorAll(".evidence-link");
+
+      function positionTooltip(event) {
+        const margin = 16;
+        const tooltipWidth = tooltip.offsetWidth || 350;
+        const tooltipHeight = tooltip.offsetHeight || 180;
+        let left = event.clientX + 18;
+        let top = event.clientY + 18;
+
+        if (left + tooltipWidth > window.innerWidth - margin) {
+          left = event.clientX - tooltipWidth - 18;
+        }
+        if (top + tooltipHeight > window.innerHeight - margin) {
+          top = event.clientY - tooltipHeight - 18;
+        }
+
+        tooltip.style.left = `${Math.max(margin, left)}px`;
+        tooltip.style.top = `${Math.max(margin, top)}px`;
+      }
+
+      evidenceLinks.forEach((link) => {
+        link.addEventListener("mouseenter", (event) => {
+          label.textContent = link.dataset.evidenceLabel;
+          quote.textContent = `“${link.dataset.evidenceQuote}”`;
+          meta.textContent = link.dataset.evidenceMeta;
+          tooltip.classList.add("is-visible");
+          tooltip.setAttribute("aria-hidden", "false");
+          positionTooltip(event);
+        });
+
+        link.addEventListener("mousemove", positionTooltip);
+        link.addEventListener("mouseleave", () => {
+          tooltip.classList.remove("is-visible");
+          tooltip.setAttribute("aria-hidden", "true");
+        });
+      });
+    }
+
+    /* 顶部工具分别控制机器 ID、方向详情和打印。 */
+    function setupToolbar() {
+      const auditButton = document.querySelector("#audit-toggle");
+      const expandButton = document.querySelector("#expand-toggle");
+      const printButton = document.querySelector("#print-button");
+
+      auditButton.addEventListener("click", () => {
+        const active = document.body.classList.toggle("audit-mode");
+        auditButton.setAttribute("aria-pressed", String(active));
+        auditButton.textContent = active ? "隐藏 ID" : "显示 ID";
+      });
+
+      expandButton.addEventListener("click", () => {
+        const details = [...document.querySelectorAll(".direction-detail")];
+        const shouldOpen = !details.every((item) => item.open);
+        details.forEach((item) => { item.open = shouldOpen; });
+        expandButton.setAttribute("aria-pressed", String(shouldOpen));
+        expandButton.textContent = shouldOpen ? "折叠方向" : "展开方向";
+      });
+
+      printButton.addEventListener("click", () => window.print());
+    }
+
+    /* 初始化顺序：先渲染数据，再绑定依赖 DOM 的交互。 */
+    renderReview(REVIEW_DATA);
+    setupNavigation();
+    setupEvidenceTooltips();
+    setupToolbar();
+  </script>
+</body>
+</html>

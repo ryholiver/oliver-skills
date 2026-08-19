@@ -132,6 +132,16 @@
         "email": "ryholiver@users.noreply.github.com"
       },
       "source": "./writing"
+    },
+    {
+      "name": "test",
+      "description": "测试用 Skills 工具集",
+      "version": "1.0.0",
+      "author": {
+        "name": "ryholiver",
+        "email": "ryholiver@users.noreply.github.com"
+      },
+      "source": "./test"
     }
   ],
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
