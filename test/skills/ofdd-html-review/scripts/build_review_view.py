@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""将 OFDD JSON 转换为 Review View JSON。
+"""【已废弃，仅兼容】将 OFDD JSON 转换为旧版 Review View JSON（全量映射）。
+
+新流程请使用 build_review_from_md.py（review.md 配置 + 自动筛选补链）。
 
 这个脚本负责“上游 OFDD → 下游 Review 视图”的结构转换，
 不负责渲染 HTML，也不修改事实源文件。

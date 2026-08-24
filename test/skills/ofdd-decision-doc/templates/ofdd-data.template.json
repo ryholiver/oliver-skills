@@ -2,6 +2,19 @@
   "_comment": "OFDD 结构化数据文件。用于下游 HTML Review skill 生成审查页面。模板中的双花括号字段需要在实际输出时替换。",
   "schema_version": "1.0.0",
   "ofdd_version": "v5",
+  "version_status": "draft",
+  "parent_ofdd_version": null,
+  "execution_control": {
+    "approved_ofdd_version": null,
+    "execution_status": "not_started",
+    "execution_action": "continue",
+    "can_continue": true,
+    "can_continue_affected_scope": true,
+    "can_continue_unaffected_scope": true,
+    "affected_scope": [],
+    "resume_conditions": [],
+    "reason": "待审查"
+  },
   "document_meta": {
     "project_name": "{{project_name}}",
     "title": "{{title}}",
@@ -141,6 +154,10 @@
   "review_gate": {
     "_comment": "决策审查节点。用于告诉下游 HTML Review skill 当前哪些内容可以审查、哪些内容不能拍板。",
     "review_required": true,
+    "execution_action": "continue",
+    "execution_frozen": false,
+    "affected_execution_scope": [],
+    "resume_conditions": [],
     "review_status": "needs_human_review",
     "summary": "{{review_summary}}",
     "decision_readiness": "not_ready",

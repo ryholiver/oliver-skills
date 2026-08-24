@@ -22,6 +22,8 @@ OFDD 项目实例
 
 HTML 是特定时间点的展示快照，不是新的事实源。
 
+本 skill 采用“单一事实源 + 版本化 Review + 继承式重启”协作模式：OFDD 负责事实、认知和决定；Review 负责当前目标下的筛选、讨论和展示；执行只读取 OFDD 的已批准版本。
+
 ## 职责边界
 
 使用本 skill：
@@ -59,7 +61,27 @@ HTML 是特定时间点的展示快照，不是新的事实源。
 
 若已有 `review_gate`、`html_review_hints` 或明确任务目标，直接使用，不重复询问。只有缺失信息会显著改变 Review 内容时才询问。
 
-### 2. 从目标反向筛选 OFDD
+如果是上一轮 Review 在 OFDD 回写后续作，必须先读取上一轮 `*-Review.md` 或其 Review 视图 JSON，识别仍有效成果和受影响范围，不得从空白 Review 开始。
+
+### 2. 编写 / 确认 review.md（Review 实例配置）
+
+每次 Review 先有一份 `*-Review.md` 配置文档，用 YAML front-matter 声明：
+
+- 生命周期元信息：`review_id`、`review_version`、`review_instance_id`、`parent_review_id`、`resumes_from_review_id`、`source_ofdd_version`、`activation_mode`、`session_state`；
+- 执行闸门：`writeback_required`、`execution_impact`、`execution_action`、`affected_scope`、`resume_conditions`、`inherited_artifacts`；
+- 展示元信息：`type`、`title`、`subtitle`、`date`、`owner`、`decider`；
+- 需求声明：`goal`、`task`、`core_question`、`expected_result`、`scope`、`excluded`；
+- 筛选配置 `filter`：
+  - `include`：本次任务范围（观察 / 推断 / 判断的显式 ID 列表）；
+  - `exclude`：显式排除；
+  - `extra_*`：本次新增的候选推断、判断、方向、疑问（标注待回写）；
+  - `blocking_questions_only`：疑问是否只收阻塞项；
+  - `highlight`：是否使用 OFDD 高亮信号；
+- 核验结论 `verification`、结论 `conclusion`、模块顺序 `modules`。
+
+review.md 正文是完整的人类可读 Review 文档，即使不生成 HTML 也自成一份 Review。
+
+### 3. 从目标反向筛选 OFDD（自动补链）
 
 按以下链路筛选最小必要信息：
 
@@ -76,20 +98,35 @@ HTML 是特定时间点的展示快照，不是新的事实源。
 
 不要把整个 OFDD 库原样搬进 HTML。删除一条内容不会改变本次判断、方向或决定时，默认放入附录或不展示。
 
-### 3. 生成 Review 视图数据
+脚本从 `filter.include` 出发，沿 OFDD 已有关系自动补全上下游链路：
 
-先读取并遵守 `references/ofdd-to-review-mapping.md`，再按 `references/review-data-contract.md` 创建 JSON 对象，至少包含：
+```text
+include 的判断 / 推断 / 观察
+→ 判断 → 支撑推断（supported_by_ids）
+→ 推断 → 基于的观察（based_on_observation_ids）
+→ 方向 → 依据的判断 / 推断（basis_ids）
+→ 疑问：阻塞项 + 与链路相关的疑问
+```
+
+`extra_*` 合并进筛选结果（本次新增内容，标注“待回写 OFDD”），`exclude` 最后排除。若任一新增内容的 `execution_impact` 为 `blocking`，当前 Review 必须进入 `paused_for_writeback`，不得继续指导受影响执行。
+
+### 4. 生成 Review 视图数据
+
+先读取并遵守 `references/ofdd-to-review-mapping.md`，再按 `references/review-data-contract.md` 创建 JSON 对象（v3 契约），至少包含：
 
 - `meta`
+- `modules`
 - `objective`
-- `summary`
-- `reasoningChains`
-- `questions`
+- `declaration`
+- `facts`
+- `verification`
+- `inferences`
+- `judgments`
 - `directions`
-- `recommendation`
-- `decision`
+- `questions`
 - `unresolved`
-- `writeback`
+- `conclusion`
+- `observationPool` / `inferencePool` / `judgmentPool`（全量查询池，供关系悬浮显示）
 
 表达边界：
 
@@ -105,18 +142,13 @@ HTML 是特定时间点的展示快照，不是新的事实源。
 优先先跑转换脚本，再交给 HTML 渲染脚本：
 
 ```bash
-python3 scripts/build_review_view.py \
-  --input /path/to/*-ofdd-data.json \
+python3 scripts/build_review_from_md.py \
+  --review-md /path/to/*-Review.md \
+  --ofdd /path/to/*-ofdd-data.json \
   --output /path/to/[项目名]-review-view-data-[YYYY-MM-DD].json
 ```
 
-可选参数：
-
-- `--focus-decision-id DEC-001`：指定本次 Review 的焦点 Decision；
-- `--review-id REV-YYYYMMDD-01`：显式指定 Review ID；
-- `--date YYYY-MM-DD`：固定 Review 生成日期。
-
-### 4. 生成 HTML
+### 5. 生成 HTML
 
 优先使用确定性脚本，而不是手工修改大段模板：
 
@@ -126,7 +158,7 @@ python3 scripts/render_review.py \
   --output /path/to/[项目名]-Review-[YYYY-MM-DD].html
 ```
 
-脚本默认读取 `assets/review-template.html`，将数据嵌入页面并更新浏览器标题。需要自定义模板时才传 `--template`。
+脚本默认读取 `assets/review-template-v3.html`（通用模块化模板），将数据嵌入页面并更新浏览器标题。需要自定义模板时才传 `--template`。
 
 默认输出命名：
 
@@ -142,7 +174,7 @@ python3 scripts/render_review.py \
 
 该 JSON 仍是由 OFDD 派生的 Review 视图，不替代 OFDD 数据源。
 
-### 5. 处理证据链接
+### 6. 处理证据链接
 
 每个进入主体的关键观察应尽量包含：
 
@@ -155,17 +187,34 @@ python3 scripts/render_review.py \
 
 优先使用相对于输出 HTML 的文件路径和稳定锚点。没有稳定锚点时保留行号、时间戳或页码，并显示 `needs_anchor` / `needs_locator`，不要伪造链接。
 
-### 6. 验证结果
+### 7. 验证结果
 
 至少检查：
 
-1. `scripts/render_review.py` 成功完成且退出码为 0；
+1. `scripts/build_review_from_md.py` 与 `scripts/render_review.py` 均成功完成且退出码为 0；
 2. HTML 包含嵌入后的 Review ID 和标题；
 3. JavaScript 语法有效；
 4. 关键判断可追溯到观察和证据；
 5. 问题显示阻塞对象；
-6. 推荐方向与正式决定没有混写；
-7. 若可使用浏览器测试，检查桌面端、移动端、证据悬浮、ID 审计模式、方向展开和横向溢出。
+6. 关系悬浮（观察 ↔ 推断 / 判断 / 方向）双向可查，且所有关系引用都能查到内容；
+7. 若可使用浏览器测试，检查桌面端、移动端、证据悬浮、核验依据悬浮、ID 审计模式和横向溢出。
+
+## 继承式重启流程
+
+```text
+Review v1 运行中
+→ 出现新信息
+→ 判定 execution_impact
+   ├─ none：当前 Review 继续
+   ├─ potential：当前 Review 继续，记录待回写风险
+   └─ blocking：暂停 Review，冻结受影响执行范围
+→ 回写 OFDD，生成 OFDD 新版本
+→ 基于上一轮成果 + 新 OFDD 生成 Review v2
+→ 只重算受影响链路
+→ 由新的 Review Gate 决定执行恢复范围
+```
+
+`Review v2` 不是新的独立 Review，而是同一 `review_id` 的继承式续轮。
 
 ## 输出页面的最低要求
 
@@ -179,18 +228,26 @@ python3 scripts/render_review.py \
 - 支持打印 / PDF 和移动端阅读；
 - 普通视图隐藏裸 ID，审计模式可显示。
 
-## 决策安全规则
+## 决策安全与执行协作规则
 
 - 输入 Decision 为 `proposed` 时，页面只能显示“拟议 / 待决策”，不能显示“已拍板”。
 - 输入没有正式 Decision 时，仍需提供 `decision` 占位对象，标题写“本次尚未形成正式决定”，状态写“待决策”或“不适用”。
 - 阻塞性问题未解决时，不得暗示对应范围可以进入执行。
-- 新信息不得覆盖旧证据；页面应把它列入 `writeback`，由上游 OFDD 更新后再重新生成 Review。
+- 执行层只读取 OFDD 的已批准版本；Review 中的新增内容不能直接改执行计划或任务状态。
+- `execution_impact: none`：当前 Review 可继续；`potential`：可继续但保留风险并回写；`blocking`：暂停当前 Review、冻结受影响执行范围并立即回写 OFDD。
+- 新信息不得覆盖旧证据；应进入 `extra_*` / `writeback`，由上游 OFDD 更新后再生成下一版 Review。
+- 下一版 Review 必须保留同一 `review_id`，递增 `review_version`，填写 `parent_review_id`、`resumes_from_review_id` 和 `inherited_artifacts`；这叫继承式重启，不是第一次激活或清空式重开。
+- 继承式重启只重算受影响链路；未受影响的目标、范围、结论、决定、未决项和回写清单必须承接。
+- 新 OFDD 的 `review_gate` 未明确允许恢复前，不得自动恢复被冻结的执行。
 
 ## 资源
 
-- `assets/review-template.html`：单文件 HTML 应用层模板。
-- `scripts/build_review_view.py`：把 OFDD JSON 转成 Review 视图 JSON。
+- `assets/review-template-v3.html`：单文件 HTML 通用模块化模板（默认）。
+- `assets/review-template.html`：旧 v2 模板（已废弃，仅兼容）。
+- `scripts/build_review_from_md.py`：从 review.md + OFDD JSON 自动筛选生成 Review 视图 JSON。
+- `scripts/build_review_view.py`：旧全量映射脚本（已废弃，仅兼容）。
 - `scripts/render_review.py`：把 Review 视图 JSON 嵌入模板。
-- `references/review-data-contract.md`：Review View JSON 的应用层字段契约。
-- `references/ofdd-to-review-mapping.md`：OFDD JSON 到 Review View JSON 的通用映射、状态边界和转换校验。
+- `references/review-md-format.md`：review.md 配置格式说明。
+- `references/review-data-contract.md`：Review View JSON（v3 契约）的应用层字段说明。
+- `references/ofdd-to-review-mapping.md`：OFDD JSON 到 Review View JSON 的筛选映射与自动补链规则。
 - `references/review-generation-rules.md`：Review 生成、表达、执行与回写规则。

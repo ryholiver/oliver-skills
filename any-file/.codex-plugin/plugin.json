@@ -1,0 +1,19 @@
+{
+  "name": "any-file",
+  "version": "1.0.0",
+  "description": "多模态文件处理工具集：文档、图片、表格、演示文稿、PDF、语音转知识",
+  "author": {
+    "name": "ryholiver",
+    "email": "ryholiver@users.noreply.github.com"
+  },
+  "interface": {
+    "displayName": "多模态文件处理",
+    "shortDescription": "文档、图片、表格、演示文稿、PDF、语音转知识",
+    "longDescription": "处理 Word、Excel、PPT、PDF、图片与语音等多模态文件，提取内容并转化为可复用的知识。",
+    "developerName": "ryholiver",
+    "category": "Productivity",
+    "capabilities": ["Skills"],
+    "defaultPrompt": ["帮我把这份文档/表格的内容整理成知识"]
+  },
+  "skills": "./skills/"
+}

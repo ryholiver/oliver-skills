@@ -4,6 +4,35 @@
 
 ## 一、输出包
 
+### 1.1 版本与执行闸门
+
+OFDD 是认知与决策事实源。每次发生会影响事实、判断、方向、决定或执行范围的变更，都必须递增 `ofdd_version`，不能只修改 Review HTML。
+
+建议在 `document_meta` 或顶层补充：
+
+```json
+{
+  "ofdd_version": "v6",
+  "version_status": "approved",
+  "parent_ofdd_version": "v5",
+  "execution_control": {
+    "approved_ofdd_version": "v6",
+    "execution_status": "active",
+    "execution_action": "continue",
+    "can_continue": true,
+    "can_continue_affected_scope": true,
+    "can_continue_unaffected_scope": true,
+    "affected_scope": [],
+    "resume_conditions": [],
+    "reason": "当前版本没有阻塞性未决项"
+  }
+}
+```
+
+`execution_action` 使用：`continue`、`continue_with_monitoring`、`freeze_and_replan`。当新信息可能改变当前执行时，先设置为 `freeze_and_replan` 或 `continue_with_monitoring`，待新的 Review Gate 明确后再恢复。
+
+`freeze_and_replan` 默认只冻结 `affected_scope`，不代表全项目停摆：`can_continue_affected_scope` 必须为 `false`，`can_continue_unaffected_scope` 可以为 `true`。在阻塞性回写期间，新的 OFDD 版本可先标记为 `needs_reassessment`，而 `approved_ofdd_version` 仍指向上一版；受影响范围不得继续，未受影响范围可在旧的已批准版本下继续。
+
 每次完整运行默认输出两个文件：
 
 ```text
@@ -103,6 +132,19 @@
   "_comment": "OFDD 结构化数据文件。用于下游 HTML Review skill 生成审查页面。",
   "schema_version": "1.0.0",
   "ofdd_version": "v5",
+  "version_status": "draft",
+  "parent_ofdd_version": null,
+  "execution_control": {
+    "approved_ofdd_version": null,
+    "execution_status": "not_started",
+    "execution_action": "continue",
+    "can_continue": true,
+    "can_continue_affected_scope": true,
+    "can_continue_unaffected_scope": true,
+    "affected_scope": [],
+    "resume_conditions": [],
+    "reason": "待审查"
+  },
   "document_meta": {},
   "sources": [],
   "evidence_refs": [],
@@ -114,7 +156,12 @@
   },
   "directions": [],
   "decisions": [],
-  "review_gate": {},
+  "review_gate": {
+    "execution_action": "continue",
+    "execution_frozen": false,
+    "affected_execution_scope": [],
+    "resume_conditions": []
+  },
   "traceability": {},
   "html_review_hints": {},
   "change_log": []
@@ -286,6 +333,10 @@
 {
   "_comment": "决策审查节点。用于告诉下游 HTML Review skill 当前哪些内容可以审查、哪些内容不能拍板。",
   "review_required": true,
+  "execution_action": "continue",
+  "execution_frozen": false,
+  "affected_execution_scope": [],
+  "resume_conditions": [],
   "review_status": "needs_human_review",
   "summary": "",
   "decision_readiness": "not_ready",
@@ -310,6 +361,15 @@
 推荐 `review_status`：`needs_human_review`、`ready_for_decision`、`blocked_by_questions`、`approved`。
 
 推荐 `decision_readiness`：`ready`、`partially_ready`、`not_ready`、`blocked`。
+
+### 4.10.1 Review 回写与执行冻结协议
+
+- `none`：只影响展示或当前认知表达，不创建 OFDD 新版本。
+- `potential`：候选内容先留在 Review，当前执行继续但带风险标记；Review 结束后回写 OFDD。
+- `blocking`：当前 Review 进入 `paused_for_writeback`，OFDD 版本递增，`execution_action` 设为 `freeze_and_replan`，并只冻结 `affected_execution_scope`。
+- 新 OFDD 版本在重新审查完成前使用 `version_status: needs_reassessment`；执行层继续读取上一版已批准版本，但不得读取该版本驱动受影响范围。
+- 新 Review 必须使用同一 `review_id` 的下一 `review_version`，通过 `parent_review_id`、`resumes_from_review_id` 和 `inherited_artifacts` 承接上一轮成果。
+- 新 Review Gate 明确 `resume_conditions` 后，才能把受影响范围恢复为可执行；HTML Review 本身不直接恢复执行。
 
 ### 4.11 traceability
 

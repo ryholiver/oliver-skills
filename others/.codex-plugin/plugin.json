@@ -1,0 +1,19 @@
+{
+  "name": "others",
+  "version": "1.0.0",
+  "description": "其他工具",
+  "author": {
+    "name": "ryholiver",
+    "email": "ryholiver@users.noreply.github.com"
+  },
+  "interface": {
+    "displayName": "其他工具",
+    "shortDescription": "其他工具",
+    "longDescription": "AI 评测、新闻摘要、NotebookLM 与日程管理等其他实用工具。",
+    "developerName": "ryholiver",
+    "category": "Productivity",
+    "capabilities": ["Skills"],
+    "defaultPrompt": ["帮我整理今天的 AI 新闻摘要"]
+  },
+  "skills": "./skills/"
+}

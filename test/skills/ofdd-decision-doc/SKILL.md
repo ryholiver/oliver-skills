@@ -16,6 +16,24 @@ metadata:
 
 默认产物不是最终 HTML 页面，而是供下一阶段生成 Review 页的中间层。
 
+OFDD 是认知与决策事实源，并负责标记哪些变更会影响计划或执行。执行层只能读取 OFDD 中已批准且未被阻塞的版本；Review 中的新增内容不能直接改执行。
+
+## 与 HTML Review 的协作协议
+
+```text
+OFDD vN（事实源 / 已批准闸门）
+→ HTML Review v1（当前目标下的筛选与讨论）
+→ 新信息分流
+   ├─ none：只影响展示，当前 Review 继续
+   ├─ potential：先记入 Review 候选区，继续执行但带风险，结束后回写
+   └─ blocking：暂停当前 Review，只冻结受影响执行范围
+→ OFDD vN+1（回写、版本递增、更新 Review Gate）
+→ 同一 review_id 的 Review v2（继承式续轮，不清空 v1）
+→ 新 Review Gate 明确恢复范围
+```
+
+边界必须保持：Review 只能提出候选变化，不能直接修改执行计划或任务状态；执行层只读取已批准且未被阻塞的 OFDD 版本。`blocking` 时未受影响的执行项可以继续，但受影响项必须等待新 OFDD 版本和新 Review Gate。
+
 ## 何时使用
 
 当用户提出以下意图时使用本 skill：
@@ -66,6 +84,7 @@ metadata:
    - 若用户未明确拍板，Decision 状态为 `proposed`。
    - 若用户明确拍板，Decision 可为 `approved`，并记录决策人、日期、适用范围、未决项和重评条件。
    - 若存在阻塞性未决项，不得进入对应执行计划。
+   - 若新信息影响当前执行，先更新 `review_gate` 的执行闸门，再由下游 Review 进行继承式重启。
 
 7. **输出双文件**
    - 生成 Markdown 库文件。
@@ -158,6 +177,8 @@ JSON 是下游 HTML Review 的主要输入。必须保持结构稳定，至少�
 - 证据完整性：`complete`、`needs_locator`、`needs_anchor`、`drifted`
 - 审查状态：`needs_human_review`、`ready_for_decision`、`blocked_by_questions`、`approved`
 - 决策就绪度：`ready`、`partially_ready`、`not_ready`、`blocked`
+- 执行闸门：`continue`、`continue_with_monitoring`、`freeze_and_replan`
+- OFDD 版本状态：`draft`、`approved`、`superseded`、`needs_reassessment`
 
 ## 参考资料
 

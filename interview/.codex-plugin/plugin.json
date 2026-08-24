@@ -1,0 +1,19 @@
+{
+  "name": "interview",
+  "version": "1.0.0",
+  "description": "面试准备与求职工具集",
+  "author": {
+    "name": "ryholiver",
+    "email": "ryholiver@users.noreply.github.com"
+  },
+  "interface": {
+    "displayName": "面试求职助手",
+    "shortDescription": "面试准备与求职工具集",
+    "longDescription": "面试复盘、简历优化、面试脚本生成与面试诊断。",
+    "developerName": "ryholiver",
+    "category": "Career",
+    "capabilities": ["Skills"],
+    "defaultPrompt": ["帮我复盘刚才的面试并给出改进建议"]
+  },
+  "skills": "./skills/"
+}

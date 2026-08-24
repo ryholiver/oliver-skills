@@ -1,0 +1,19 @@
+{
+  "name": "pre-coding",
+  "version": "1.0.0",
+  "description": "编码前准备工作：场景对齐 → 需求精炼，为进入编码阶段做准备",
+  "author": {
+    "name": "ryholiver",
+    "email": "ryholiver@users.noreply.github.com"
+  },
+  "interface": {
+    "displayName": "编码前准备",
+    "shortDescription": "场景对齐 → 需求精炼，为进入编码阶段做准备",
+    "longDescription": "在写代码前完成场景对齐、需求精炼与方案确认，避免过早编码。",
+    "developerName": "ryholiver",
+    "category": "Developer Tools",
+    "capabilities": ["Skills"],
+    "defaultPrompt": ["帮我先对齐这个需求再开始编码"]
+  },
+  "skills": "./skills/"
+}

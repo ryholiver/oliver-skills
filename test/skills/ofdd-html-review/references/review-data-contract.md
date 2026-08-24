@@ -1,43 +1,31 @@
-# Review 应用层数据契约
+# Review 视图数据契约（v3）
 
 ## 一、定位
 
-该对象是 OFDD 面向一次具体 Review 的派生视图，用于嵌入单文件 HTML。它不是新的事实源。
-
-输入优先来自上游 OFDD JSON：
-
-```text
-sources / evidence_refs / observations
-findings.inferences / judgments / questions
-directions / decisions
-review_gate / traceability / html_review_hints
-```
-
-输出为：
-
-```text
-meta / objective / summary / reasoningChains / questions
-directions / recommendation / decision / unresolved / writeback
-```
+该 JSON 是 review.md + OFDD 派生的 Review 视图数据，嵌入通用模板 `assets/review-template-v3.html` 渲染。它不是新的事实源。
 
 ## 二、顶层结构
 
 ```json
 {
   "meta": {},
-  "objective": {},
-  "summary": {},
-  "reasoningChains": [],
-  "questions": [],
+  "lifecycle": {},
+  "executionGate": {},
+  "modules": [],
+  "declaration": [],
+  "facts": [],
+  "verification": [],
+  "inferences": [],
+  "judgments": [],
   "directions": [],
-  "recommendation": {},
-  "decision": {},
+  "questions": [],
   "unresolved": [],
-  "writeback": []
+  "conclusion": {},
+  "observationPool": {},
+  "inferencePool": {},
+  "judgmentPool": {}
 }
 ```
-
-所有顶层字段均应存在。某一阶段尚未产生方向或决定时，用空数组和明确占位对象表达，不删除字段。
 
 ## 三、字段定义
 
@@ -46,207 +34,167 @@ directions / recommendation / decision / unresolved / writeback
 ```json
 {
   "id": "REV-YYYYMMDD-01",
-  "title": "项目名",
-  "subtitle": "本次 Review 主题",
-  "type": "认知型 Review / 判断型 Review / 决策型 Review / 重评型 Review",
+  "title": "Review 标题",
+  "subtitle": "Review 副标题",
   "date": "YYYY-MM-DD",
-  "status": "待 Review / 待负责人确认 / 已完成 / 待重评",
-  "owner": "决策人或待补",
-  "sourceOfTruth": "上游 OFDD 文件名",
-  "timeBasis": "截至 YYYY-MM-DD"
+  "type": "认知型 / 判断型 / 决策型 / 重评型 Review",
+  "owner": "负责人或待补",
+  "timeBasis": "材料截至 YYYY-MM-DD",
+  "instanceId": "REV-YYYYMMDD-01-v1",
+  "reviewVersion": 1,
+  "sessionState": "running",
+  "activationMode": "initial",
+  "sourceOfddVersion": "v5",
+  "parentReviewId": null
 }
 ```
 
-### 3.2 objective
+`meta` 中的 `reviewVersion`、`sessionState`、`activationMode` 和 `sourceOfddVersion` 用于区分首次激活与继承式重启。
+
+### 3.2 lifecycle（Review 生命周期）
 
 ```json
 {
-  "question": "本次需要回答的一个核心问题",
-  "goal": "本次 Review 预期形成什么结果",
-  "scope": "覆盖范围",
-  "excluded": "明确不处理什么",
-  "criteria": ["评价标准一", "评价标准二"]
+  "review_id": "REV-YYYYMMDD-01",
+  "review_instance_id": "REV-YYYYMMDD-01-v2",
+  "review_version": 2,
+  "parent_review_id": "REV-YYYYMMDD-01-v1",
+  "resumes_from_review_id": "REV-YYYYMMDD-01-v1",
+  "source_ofdd_version": "v6",
+  "activation_mode": "inherited_resume",
+  "session_state": "resumed_inherited",
+  "writeback_required": false,
+  "execution_impact": "none",
+  "execution_action": "continue",
+  "can_continue_execution": true,
+  "can_continue_affected_scope": true,
+  "can_continue_unaffected_scope": true,
+  "execution_status": "active",
+  "affected_scope": [],
+  "resume_conditions": [],
+  "inherited_artifacts": ["结论", "F-J-004", "DEC-001"],
+  "validation_warnings": [],
+  "ofdd_version_mismatch": false
 }
 ```
 
-### 3.3 summary
+`session_state` 建议使用：`running`、`paused_for_writeback`、`resumed_inherited`、`superseded`、`closed`。
+
+`review_id` 标识同一条 Review 线，`review_instance_id` 标识一次具体快照；继承式重启只递增 `review_version`，不更换 `review_id`，也不清空上一轮的有效成果。
+### 3.3 executionGate（执行闸门）
 
 ```json
 {
-  "current": "当前核心判断",
-  "recommendation": "当前建议；不是正式决定",
-  "uncertainty": "最大不确定性或阻塞问题"
+  "impact": "blocking",
+  "action": "freeze_and_replan",
+  "canContinue": false,
+  "canContinueAffectedScope": false,
+  "canContinueUnaffectedScope": true,
+  "executionStatus": "partially_frozen",
+  "affectedScope": ["DEC-001", "计划 P-003"],
+  "resumeConditions": ["新 OFDD 版本获批", "新的 Review Gate 明确恢复范围"],
+  "writebackRequired": true
 }
 ```
 
-### 3.4 reasoningChains
+`blocking` 时，HTML 只能展示暂停状态、受影响范围和续作条件；`canContinueUnaffectedScope: true` 仅表示未受影响的执行项可以继续，不能被解读为受影响范围也可继续。HTML 不直接修改执行状态。
 
-每条链以 Judgment 为入口，向下连接 Inference、Observation 和 Evidence：
+### 3.4 modules（模块配置，模板按此渲染）
+
+```json
+[
+  {"id": "declaration", "navTitle": "Review 声明", "number": "00", "title": "Review 声明", "kind": "declaration"},
+  {"id": "facts", "navTitle": "事实", "number": "01", "title": "事实", "kind": "facts"}
+]
+```
+
+`kind` 决定使用哪个渲染器：`declaration` / `facts` / `verification` / `inferences` / `judgments` / `directions` / `questions` / `unresolved` / `conclusion`。模块顺序由数组决定，可增删。
+
+### 3.5 declaration（Review 声明）
+
+```json
+[{"label": "核心问题", "value": "本次要回答的问题"}]
+```
+
+### 3.6 facts（观察条目）
 
 ```json
 {
-  "id": "CHAIN-01",
-  "title": "人类可读的判断链标题",
-  "status": "待验证",
-  "statusTone": "pending",
-  "judgment": {
-    "id": "F-J-001",
-    "text": "相对于评价标准形成的判断",
-    "criteria": ["评价标准"],
-    "condition": "判断成立条件"
-  },
-  "inference": {
-    "id": "F-I-001",
-    "text": "观察可能说明什么"
-  },
-  "observations": [
-    {
-      "id": "O-001",
-      "text": "证据直接支持的观察",
-      "evidence": {
-        "id": "E-001",
-        "label": "人类可读证据名称",
-        "quote": "短原文快照",
-        "locator": "S-001 · L10-L14",
-        "integrity": "完整 / 待补位置 / 待加锚点 / 已漂移",
-        "href": "相对路径或可打开链接"
-      }
-    }
+  "id": "O-012",
+  "text": "观察内容",
+  "status": "已确认 / 部分确认 / 待核验",
+  "evidence": [{"id": "E-003", "label": "证据名", "quote": "原文快照", "locator": "定位", "integrity": "complete", "href": "相对路径"}],
+  "relations": {"inferences": ["F-I-001"], "judgments": [], "directions": ["DIR-C-01"]}
+}
+```
+
+`status` 决定条目颜色：已确认（绿）、部分确认（琥珀）、待核验（红）。
+
+### 3.7 verification（核验条目）
+
+```json
+{
+  "id": "O-014",
+  "status": "部分确认",
+  "checks": [
+    {"name": "忠于来源", "ok": true, "note": "判断依据，悬停显示"},
+    {"name": "仍有效", "ok": true, "note": "判断依据"},
+    {"name": "适用当前范围", "ok": true, "note": "判断依据"},
+    {"name": "反例 / 局限", "ok": false, "note": "判断依据"}
   ]
 }
 ```
 
-`statusTone` 使用：
-
-- `pending`
-- `supported`
-- `selected`
-- `decided`
-- `blocked`
-- `neutral`
-
-若 Judgment 直接基于 Observation，没有独立 Inference，可创建明确占位：
+### 3.8 inferences（推断）
 
 ```json
-{
-  "id": "N/A",
-  "text": "本判断直接基于观察，未新增独立推断。"
-}
+{"id": "F-I-006", "text": "推断内容", "status": "已支持 / 待验证 / 候选（待回写）", "observations": ["O-013"]}
 ```
 
-### 3.5 questions
+### 3.9 judgments（判断）
 
 ```json
-{
-  "id": "F-Q-001",
-  "text": "需要回答什么",
-  "purpose": "为什么问",
-  "impact": "影响哪个判断、方向、决定、计划或执行",
-  "blocking": "具体阻塞性",
-  "evidenceNeeded": "需要什么信息或证据",
-  "owner": "回答人或负责人",
-  "tone": "blocking / later"
-}
+{"id": "F-J-004", "text": "判断结果", "evaluation_object": "评价对象", "criterion": "评价标准", "status": "已支持 / 待验证", "inferences": ["F-I-005"]}
 ```
 
-`tone` 只是页面展示分类，由 OFDD 的阻塞性和阻塞对象推导，不是新的问题状态。`blocking` 建议输出成可读文本，如“阻塞：decision、DIR-001”或“当前不阻塞”。
-
-### 3.6 directions
+### 3.10 directions（方向）
 
 ```json
-{
-  "id": "DIR-001",
-  "letter": "A",
-  "title": "方向名称",
-  "goal": "方向目标",
-  "benefits": ["支持理由一", "支持理由二"],
-  "risk": "主要风险",
-  "boundary": "范围与不包含内容",
-  "status": "待决策 / 探索中 / 已替代",
-  "reviewReady": true,
-  "selected": false
-}
+{"id": "DIR-C-01", "title": "方向名", "responds": "F-J-004", "goal": "目标", "basis": ["O-012"], "risk": "风险与依赖", "status": "候选，待回写"}
 ```
 
-- `status` 用于展示方向当前所处阶段；
-- `reviewReady: true` 表示可进入本轮 Review，但不等于已经被推荐或批准；
-- `selected: true` 表示当前推荐或已选择方向。若只是推荐、尚未拍板，必须由 `decision.status` 明确区分。
+`responds` 和 `trigger` 可引用判断或推断，模板自动识别类型。
 
-### 3.7 recommendation
+### 3.11 questions（疑问）
 
 ```json
-{
-  "directionId": "DIR-001",
-  "title": "建议选择某方向",
-  "rationale": "建议理由",
-  "condition": "成立条件或需要先确认的问题"
-}
+{"id": "Q-01", "text": "问题", "trigger": "O-014 或 F-I-006", "impact": "影响对象", "blocking": "是 / 否"}
 ```
 
-### 3.8 decision
+### 3.12 unresolved / conclusion
 
 ```json
-{
-  "id": "DEC-001 或 N/A",
-  "title": "选择某方向 / 本次尚未形成正式决定",
-  "status": "拟议 / 已拍板 / 待决策 / 暂缓 / 已撤销 / 已替代",
-  "selected": "DIR-001 或无",
-  "rejected": "被拒绝方向或无",
-  "deferred": "暂缓方向或无",
-  "decisionMaker": "姓名或待补",
-  "decidedAt": "日期时间或待补",
-  "scope": "决定适用范围",
-  "rationale": "决定依据",
-  "reconsiderWhen": "重新评估条件"
-}
+{"id": "Q-01", "issue": "未决事项", "impact": "影响对象", "owner": "待补"}
+
+{"current": "当前结论", "basis": ["O-012", "F-J-004"], "uncertainty": "最大不确定性"}
 ```
 
-不得依据推荐方向自行把 `status` 改成“已拍板”。
+`basis` 为混合 ID 列表（观察 / 推断 / 判断），模板按查询池自动识别类型。
 
-### 3.9 unresolved
+### 3.13 查询池（observationPool / inferencePool / judgmentPool）
 
-```json
-{
-  "id": "F-Q-001",
-  "issue": "未决事项",
-  "blocking": "阻塞什么",
-  "owner": "负责人",
-  "due": "确认时间或待确认"
-}
-```
+包含 OFDD **全部**观察 / 推断 / 判断（含未在主体展示的），供关系悬浮按 ID 查内容。主体展示仍由 `facts` 等数组决定。
 
-### 3.10 writeback
+## 四、关系悬浮
 
-```json
-{
-  "title": "新增 Source / 更新 Finding / 更新 Decision",
-  "detail": "需要回写的具体内容",
-  "complete": false
-}
-```
-
-## 四、上游 OFDD 到 Review 的映射
-
-| Review 字段 | OFDD 主要来源 |
-| --- | --- |
-| `objective` | 用户目标、`document_meta`、`review_gate` |
-| `reasoningChains.judgment` | `findings.judgments` |
-| `reasoningChains.inference` | `findings.inferences` 与 traceability |
-| `observations` | `observations` |
-| `evidence` | `evidence_refs` + `sources` |
-| `questions` | `findings.questions` |
-| `directions` | `directions` |
-| `recommendation` | `review_gate`、`html_review_hints`、候选方向比较 |
-| `decision` | `decisions`；不得从 recommendation 伪造 |
-| `unresolved` | open questions、缺失元信息、证据完整性问题 |
-| `writeback` | 本轮 Review 预期产生的 Source、Observation 与状态更新 |
+- 观察条目显示它支撑的推断 / 判断 / 方向（`relations` + 反向推导）；
+- 推断、判断、方向条目显示它们依赖的观察（`observations` / `basis`）；
+- 悬停任意关系链接，显示目标条目的类型 + ID + 内容；
+- 所有关系引用必须能在查询池或主体列表中找到，否则列入 writeback 由 OFDD 补齐。
 
 ## 五、最小质量门槛
 
-- 至少一个核心问题；
-- 至少一条判断链；
-- 每条关键判断链至少一个观察和一个证据引用；
-- 决策型 Review 至少两个真实候选方向，或明确说明为什么只有一个；
-- 阻塞问题必须写明阻塞对象；
-- Decision 状态忠于输入；
-- 所有缺失信息用“待补 / 待确认 / N/A”表达，不编造。
+- `modules` 至少包含 `declaration` 和一个内容模块；
+- 至少一条观察事实；
+- 关键推断 / 判断 / 方向保留 OFDD ID 与关系引用；
+- 所有缺失信息用"待补 / 待确认 / 候选（待回写）"表达，不编造。

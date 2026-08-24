@@ -1,0 +1,19 @@
+{
+  "name": "feishu",
+  "version": "1.0.0",
+  "description": "飞书生态全栈工具集",
+  "author": {
+    "name": "ryholiver",
+    "email": "ryholiver@users.noreply.github.com"
+  },
+  "interface": {
+    "displayName": "飞书工具集",
+    "shortDescription": "飞书生态全栈工具集",
+    "longDescription": "覆盖飞书文档、消息、日历、多维表格、云盘、审批、会议等场景的全栈工具集。",
+    "developerName": "ryholiver",
+    "category": "Productivity",
+    "capabilities": ["Skills"],
+    "defaultPrompt": ["帮我用飞书新建一篇文档"]
+  },
+  "skills": "./skills/"
+}

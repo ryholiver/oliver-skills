@@ -33,7 +33,19 @@ OFDD JSON 数据文件
 可交互审查页面
 ```
 
-## 三、审查节点优先
+## 三、回写后的 Review 不是第一次激活
+
+当 HTML Review 发现阻塞性新信息并回写 OFDD 后：
+
+- 旧 Review 保留为历史快照，状态为 `paused_for_writeback`；
+- 新 Review 使用同一个 `review_id`，只递增 `review_version`；
+- `parent_review_id` 和 `resumes_from_review_id` 指向上一轮实例；
+- `inherited_artifacts` 列出需要承接的目标、有效结论、已确认链路、未决项和回写清单；
+- 新版只重算受影响部分，未受影响成果不能因为重启而丢失。
+
+因此，OFDD 回写后的 HTML Review 应被称为“继承式续轮 / 继承式重启”，而不是新的第一次 Review。
+
+## 四、审查节点优先
 
 当用户没有明确拍板时：
 

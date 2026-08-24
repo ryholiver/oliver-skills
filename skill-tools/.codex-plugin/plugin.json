@@ -1,0 +1,19 @@
+{
+  "name": "skill-tools",
+  "version": "1.0.0",
+  "description": "Skill 创建、优化、提取工具集",
+  "author": {
+    "name": "ryholiver",
+    "email": "ryholiver@users.noreply.github.com"
+  },
+  "interface": {
+    "displayName": "Skill 工具集",
+    "shortDescription": "Skill 创建、优化、提取工具集",
+    "longDescription": "创建、优化与提取 Codex/Claude Skill，并支持从工作流中沉淀技能。",
+    "developerName": "ryholiver",
+    "category": "Developer Tools",
+    "capabilities": ["Skills"],
+    "defaultPrompt": ["帮我把这个工作流提取成 Skill"]
+  },
+  "skills": "./skills/"
+}
