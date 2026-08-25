@@ -12,7 +12,7 @@
 #
 # 前置：
 #   - 已跑 setup.sh --ensure-model 物化工作副本 okr-model.json（本脚本不物化，缺失即报错）
-#   - 已通过审核门（本脚本不再渲染审核视图，只负责执行写入）
+#   - 已通过 Obsidian 审核文件确认（本脚本不再渲染审核视图，只负责执行写入）
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
